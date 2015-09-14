@@ -10,7 +10,7 @@ url="http://code.google.com/p/google-breakpad/"
 groups=('devel')
 license=('BSD')
 makedepends=('git' 'gcc-libs')
-depends=('gcc-libs')
+depends=()
 options=('staticlibs' '!strip')
 source=("$pkgbase"::'git+https://chromium.googlesource.com/breakpad/breakpad'
 	linux_syscall_support.h)
