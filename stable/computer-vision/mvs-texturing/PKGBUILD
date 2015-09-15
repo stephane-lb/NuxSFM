@@ -1,0 +1,61 @@
+# vim: set ts=2 sw=2 et:
+# $Id:.
+# NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
+
+pkgname=mvs-texturing
+# there is no git describe from Simon's GitHUB. Using last pull date (m/d/y) for versioning.
+pkgver=09152015
+pkgrel=1.1
+pkgdesc="3D reconstruction pipelines using structure-from-motion and multi-view stereo techniques"
+arch=('x86_64')
+url="http://www.gris.tu-darmstadt.de/projects/mvs-texturing"
+license=('GPL')
+makedepends=('cmake' 'git')
+makedepends=('git')
+conflicts=('mvs-texturing')
+provides=('mvs-texturing')
+replaces=('mvs-texturing')
+groups=('computer-vision' 'sfm')
+
+# The git repo is detected by the 'git:' or 'git+' beginning. The branch
+# '$pkgname' is then checked out upon cloning, expediating versioning:
+
+source=("$pkgname"::'git+https://github.com/nmoehrle/mvs-texturing.git')
+        
+# Because the sources are not static, skip Git checksum:
+md5sums=('SKIP')
+
+
+# to be uncommented when git describe is available
+#pkgver() {
+#    cd "$srcdir/$pkgname"
+#    # Use the tag of the last commit
+#    git describe --long | sed -E 's/([^-]*-g)/r\1/;s/-/./g'
+#}
+      
+
+build() {
+    cd "$srcdir/$pkgname"
+    
+    unset CFLAGS
+    unset CXXFLAGS
+
+    mkdir build
+    cd build
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/opt/sfm ..
+    make
+
+}
+
+package() {
+    cd "$srcdir/$pkgname"
+    install -Dm755 "$srcdir/$pkgbase"/build/apps/texrecon/texrecon "${pkgdir}/usr/local/bin/texrecon"
+    
+    # install licences
+    install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
+    install -m644 $srcdir/$pkgname/LICENSE.txt "${pkgdir}/usr/share/licenses/${pkgname}/"
+    install -m644 $srcdir/$pkgname/README.md "${pkgdir}/usr/share/licenses/${pkgname}/"
+    
+    #clean src dir
+    rm -fr $srcdir
+}
