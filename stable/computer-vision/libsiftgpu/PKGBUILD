@@ -1,0 +1,82 @@
+# vim: set ts=2 sw=2 et:
+# $Id:.
+# NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
+
+pkgname=('libsiftgpu-CUDA' 'libsiftgpu-NONCUDA')
+pkgver=400
+pkgrel=1.1
+pkgdesc="SiftGPU Libraries: A GPU Implementation of Scale Invariant Feature Transform (SIFT)"
+arch=('x86_64')
+url="http://www.cs.unc.edu/~ccwu/siftgpu/"
+groups=('computer-vision' 'sfm')
+license=('proprietary')
+makedepends=('devil' 'cuda' 'gcc' 'automake' 'autoconf')
+options=('strip')
+source=("http://wwwx.cs.unc.edu/~ccwu/cgi-bin/siftgpu.cgi?SiftGPU-V${pkgver}.zip"
+	"license.txt"
+	"README.txt"
+	"makefile.cuda"
+	"makefile.noncuda"
+	"libsiftgpu.install")
+md5sums=('dbc14f3e073a64c1892bb0b05cd91dfc'
+	'c6e3eb9a1146a80ff409dff4d6ad7a19'
+	'e0c35b3e104a5f1182057e1101929c12'
+	'131bd0cc21e3e9e0eb67a5126b774d2d'
+	'8c6280c0cadcd90200cbc36fdb629883'
+	'SKIP')
+install=libsiftgpu.install
+
+package_libsiftgpu-CUDA() {
+	provides=(libsiftgpu sift)
+	replaces=(libsiftgpu sift)
+	depends=( 'glew' 'freeglut' 'devil' 'cuda')
+	options=('strip')
+
+	#build
+        cd "$srcdir/SiftGPU"
+        cp $srcdir/makefile.cuda makefile
+        make -j1
+                
+        #install
+        cd "$srcdir/SiftGPU/bin"
+        install -Dm644 libsiftgpu.a "$pkgdir"/usr/local/lib/libsiftgpu.a
+        install -Dm644 libsiftgpu.so "$pkgdir"/usr/local/lib/libsiftgpu.so
+        
+        install -Dm755 MultiThreadSIFT "$pkgdir"/usr/local/bin/MultiThreadSIFT
+        install -Dm755 SimpleSIFT "$pkgdir"/usr/local/bin/SimpleSIFT
+        install -Dm755 TestWinGlut "$pkgdir"/usr/local/bin/TestWinGlut
+        install -Dm755 server_siftgpu "$pkgdir"/usr/local/bin/server_siftgpu
+        install -Dm755 speed "$pkgdir"/usr/local/bin/speed
+
+    # licence
+    install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
+    install -m644 $srcdir/license.txt "${pkgdir}/usr/share/licenses/${pkgname}/"
+    install -m644 $srcdir/README.txt "${pkgdir}/usr/share/licenses/${pkgname}/"
+}
+
+package_libsiftgpu-NONCUDA() {
+	depends=('glew' 'freeglut' 'devil')
+	provides=(libsiftgpu sift)
+	replaces=(libsiftgpu sift)
+	options=('strip')
+	#build
+        cd "$srcdir/SiftGPU"
+        make clean
+        cp $srcdir/makefile.noncuda makefile
+        make -j1
+                
+        #install
+        cd "$srcdir/SiftGPU/bin"
+        install -Dm644 libsiftgpu.a "$pkgdir"/usr/local/lib/libsiftgpu.a
+        install -Dm644 libsiftgpu.so "$pkgdir"/usr/local/lib/libsiftgpu.so
+        
+        install -Dm755 MultiThreadSIFT "$pkgdir"/usr/local/bin/MultiThreadSIFT
+        install -Dm755 SimpleSIFT "$pkgdir"/usr/local/bin/SimpleSIFT
+        install -Dm755 TestWinGlut "$pkgdir"/usr/local/bin/TestWinGlut
+        install -Dm755 speed "$pkgdir"/usr/local/bin/speed
+
+    # licence
+    install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
+    install -m644 $srcdir/license.txt "${pkgdir}/usr/share/licenses/${pkgname}/"
+    install -m644 $srcdir/README.txt "${pkgdir}/usr/share/licenses/${pkgname}/"
+}
