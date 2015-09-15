@@ -1,0 +1,72 @@
+# vim: set ts=2 sw=2 et:
+# $Id:.
+# NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
+
+pkgname=bundler
+pkgver=0.0
+pkgrel=1.1
+pkgdesc="Bundler is a structure-from-motion system for unordered image collections (for instance, images from the Internet)."
+arch=('x86_64')
+url="http://www.cs.cornell.edu/~snavely/bundler/"
+license=('GPL')
+depends=('python' 'libsiftgpu' 'jhead')
+makedepends=('git' 'lapack' 'gcc' 'blas')
+provides=('bundler')
+conflicts=('bundler')
+provides=('bundler')
+groups=('computer-vision' 'sfm')
+
+# The git repo is detected by the 'git:' or 'git+' beginning. The branch
+# '$pkgname' is then checked out upon cloning, expediating versioning:
+
+source=("$pkgname"::'git+https://github.com/snavely/bundler_sfm.git'
+	"RunBundler.sh")
+        
+# Because the sources are not static, skip Git checksum:
+md5sums=('SKIP'
+	'SKIP')
+
+prepare() {
+    cd "$srcdir/$pkgname"
+    git submodule init
+    git submodule update
+}
+
+
+pkgver() {
+  cd "$srcdir/$pkgname"
+  # Use the tag of the last commit
+  git describe --long | sed -E 's/([^-]*-g)/r\1/;s/-/./g'
+}
+
+
+build() {
+    mycarch="x86_64"
+    mychost="x86_64-unknown-linux-gnu"
+    myflags="-march=x86-64"
+
+    cd "$srcdir/$pkgname"
+    make
+}
+
+package() {
+    # install bundler's binaries
+    install -dm755 "${pkgdir}"/usr/local/bin
+    install -m755 "$srcdir/$pkgname/bin/Bundle2PMVS" "${pkgdir}/usr/local/bin/Bundle2PMVS"
+    install -m755 "$srcdir/$pkgname/bin/Bundle2Ply" "${pkgdir}/usr/local/bin/Bundle2Ply"
+    install -m755 "$srcdir/$pkgname/bin/Bundle2Vis" "${pkgdir}/usr/local/bin/Bundle2Vis"
+    install -m755 "$srcdir/$pkgname/bin/KeyMatchFull" "${pkgdir}/usr/local/bin/KeyMatchFull"
+    install -m755 "$srcdir/$pkgname/bin/RadialUndistort" "${pkgdir}/usr/local/bin/RadialUndistort"
+    install -m755 "$srcdir/$pkgname/bin/bundler" "${pkgdir}/usr/local/bin/bundler"
+    install -m755 "$srcdir/$pkgname/bin/zlib1.dll" "${pkgdir}/usr/local/bin/zlib1.dll"
+    install -m755 "$srcdir/$pkgname/bin/extract_focal.pl" "${pkgdir}/usr/local/bin/extract_focal.pl"
+    install -m755 "$srcdir/$pkgname/bin/libANN_char.so" "${pkgdir}/usr/local/bin/libANN_char.so"
+    install -m755 "$srcdir/$pkgname/bin/ToSift.sh" "${pkgdir}/usr/local/bin/ToSift.sh"
+    install -m755 "$srcdir/$pkgname/bin/ToSiftList.sh" "${pkgdir}/usr/local/bin/ToSiftList.sh"
+    
+    install -dm755 "${pkgdir}"/usr/local/sbin
+    install -m755 "$startdir/RunBundler.sh" "${pkgdir}/usr/local/sbin/RunBundler.sh"
+
+    # license
+    install -Dm644 "$srcdir/$pkgname/README.md" "$pkgdir/usr/share/licenses/$pkgname/README.bundler"
+}
