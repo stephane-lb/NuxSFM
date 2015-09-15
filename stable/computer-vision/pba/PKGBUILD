@@ -1,0 +1,53 @@
+# vim: set ts=2 sw=2 et:
+# $Id:.
+# NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
+
+pkgbase=pba
+pkgname=('pba')
+pkgver=1.0.5
+pkgrel=1.1
+pkgdesc="Multicore Bundle Adjustment"
+arch=('x86_64')
+url="http://grail.cs.washington.edu/projects/mcba/"
+license=('GPL')
+groups=('computer-vision' 'sfm')
+#options=('!strip' '!libtool')
+makdepends=('gcc-libs' 'make' 'automake' 'autoconf')
+source=(http://grail.cs.washington.edu/projects/mcba/${pkgbase}_v${pkgver}.zip
+	makefile_no_gpu
+	makefile_with_cuda_compat_gpu)
+md5sums=('672f5cd6c1b4c08517409809b819c547'
+	'SKIP'
+	'SKIP')
+
+
+package() {
+	optdepends=('cuda: for Nvdia users')
+	makedepends=('cuda')
+	provides=('pba')
+	conflicts=('pba')
+	replaces=('pba')
+
+        cd "$srcdir/${pkgbase}"
+        # Enable CUDA and SSE
+	install -m644 $startdir/makefile_with_cuda_compat_gpu makefile
+	export CFLAGS="$CFLAGS -I/opt/cuda/include -L/opt/cuda/lib64 -march=x86-64 -march=x86-64 -mtune=generic -O2 -pipe -L./bin"
+	export CXXFLAGS=$CFLAGS
+	
+	make CUDA_INSTALL_PATH=/opt/cuda
+	
+        cd "$srcdir/${pkgbase}/bin/"
+        install -Dm755 libpba.so "$pkgdir"/usr/local/lib/libpba.so
+        install -Dm755 driver "$pkgdir"/usr/local/bin/driver
+        install -Dm755 out/${pkgbase}.o "$pkgdir"/usr/local/lib/${pkgbase}.o
+        install -Dm755 out/ConfigBA.o "$pkgdir"/usr/local/lib/ConfigBA.o
+        install -Dm755 out/SparseBundleCPU.o  "$pkgdir"/usr/local/lib/SparseBundleCPU.o 
+
+	# license
+	install -Dm644 $srcdir/$pkgbase/COPYING "$pkgdir/usr/share/licenses/$pkgbase/COPYING"
+	install -Dm644 $srcdir/$pkgbase/History.txt "$pkgdir/usr/share/licenses/$pkgbase/History.txt"
+	         
+
+}
+
+
