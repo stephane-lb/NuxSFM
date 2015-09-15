@@ -10,6 +10,6 @@ You can pickup and tweak NuxSFM code or scripts for any purposes. BUT keep in mi
 So please pay attention to licences, terms and conditions of use of those codes. 
 NuxSFM includes individual details of thoses licences and terms in its binaries and building scripts. Please read them if you have any doubt.
 
-I decline any responsability for any missunderstanding, any bad use of those licences, terms or conditions of use.
-
-Pierre, September 2015
+Licence
+-------
+See LICENCE.
