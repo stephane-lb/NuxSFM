@@ -1,0 +1,82 @@
+# Maintainer: Sven-Hendrik Haase <sh@lutzhaase.com>
+# Maintainer: Javier Fuentes <0xffaa.rm@gmail.com>
+# Contributor: Figo.zhang <figo1802@gmail.com>
+# Contributor: hauptmech
+# NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
+
+pkgbase=flann
+pkgname=flann-nuxsfm
+pkgver=1.8.4
+pkgrel=2
+pkgdesc="FLANN is a library for performing fast approximate
+nearest neighbor searches in high dimensional spaces.
+It contains a collection of algorithms we found to work
+best for nearest neighbor search and a system for
+automatically choosing the best algorithm and optimum
+parameters depending on the dataset."
+arch=('x86_64')
+url='http://www.cs.ubc.ca/~mariusm/index.php/FLANN/FLANN'
+license=('BSD')
+depends=('hdf5' 'openmpi' 'python2' 'intel-tbb' 'boost')
+makedepends=('cmake' 'python2' 'cuda<=6.9' 'python2' 'openmpi' 'hdf5' 'boost')
+optdepends=('cuda<=6.9: cuda support')
+source=("http://people.cs.ubc.ca/~mariusm/uploads/FLANN/flann-${pkgver}-src.zip")
+md5sums=('a0ecd46be2ee11a68d2a7d9c6b4ce701')
+provides=('flann' 'flann-nuxsfm')
+conflicts=('flann' 'flann-nuxsfm')
+replaces=('flann' 'flann-nuxsfm')
+
+build() {
+      
+  cd $srcdir/flann-${pkgver}-src
+
+  sed -i 's/lib64/lib/g' cmake/flann_utils.cmake
+
+  sed -i '1 i #undef _GLIBCXX_ATOMIC_BUILTINS' src/cpp/flann/algorithms/kdtree_cuda_3d_index.cu
+  sed -i '1 i #undef _GLIBCXX_USE_INT128' src/cpp/flann/algorithms/kdtree_cuda_3d_index.cu
+
+  sed -i 's|#!/usr/bin/env python|#!/usr/bin/python2|' \
+      bin/download_checkmd5.py \
+      bin/run_test.py \
+      src/python/setup.py.tpl \
+      test/test_clustering.py \
+      test/test_index_save.py \
+      test/test_nn_autotune.py \
+      test/test_nn_index.py \
+      test/test_nn.py
+
+  sed -i 's|#!/usr/bin/python|#!/usr/bin/python2|' \
+      test/memusage_clustering.py \
+      test/memusage_nn.py
+
+  sed -i "s|setup\.py install|setup.py install --root=$pkgdir --optimize=1|" src/python/CMakeLists.txt
+
+  [[ -d build ]] && rm -r build
+  
+  mkdir build && cd build
+
+  export CFLAGS="$CFLAGS -O2 -Wall -Wno-deprecated -pthread  -march=native -mfpmath=sse -fpermissive"
+  export CXXFLAGS=$CFLAGS
+          
+  cmake .. \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_INSTALL_PREFIX=/usr/local \
+      -DBUILD_MATLAB_BINDINGS=OFF \
+      -DBUILD_PYTHON_BINDINGS=ON \
+      -DPYTHON_EXECUTABLE=/usr/bin/python2 \
+      -DBUILD_CUDA_LIB=OFF \
+      -DUSE_MPI:BOOL=ON
+  make
+}
+
+package_flann-nuxsfm() {
+  cd $srcdir/flann-${pkgver}-src
+  
+  cd build
+  make DESTDIR=$pkgdir install
+
+  #install license file
+  install -D -m644 ../COPYING "${pkgdir}/usr/share/licenses/${pkgbase}/LICENSE"
+
+}
+
