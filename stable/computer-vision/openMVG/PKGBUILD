@@ -1,0 +1,166 @@
+# vim: set ts=2 sw=2 et:
+# $Id:.
+# NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
+
+pkgbase=('openMVG')
+pkgname=('openMVG' 'openMVG-tests' 'openMVG-devel' 'openMVG_samples')
+pkgver=v0.9.r0.gf0889f0
+pkgrel=1
+pkgdesc="open Multiple View Geometry library for computer-vision by Pierre Moulon. Nick name: 'Corydoras sterbai'.
+	New features: 
+	- New Image Localization API
+	- Ground control point support
+	- Automatic pair selection for the sequential/incremental pipeline
+	- OpenMVG2MVE2"
+arch=('x86_64')
+url="http://imagine.enpc.fr/~moulonp/openMVG/"
+groups=('computer-vision' 'sfm')
+license=('MPL 2.0')
+depends=('libjpeg-turbo' 'libxxf86vm' 'libxi' 'libxrandr' 'graphviz' 'libpng' 'blas' 'libgl' 'lapack')
+makedepends=('binutils' 'mesa' 'libgl' 'cmake' 'git' 'libxfixes' 'blas' 'glpk' 'doxygen' 'gcc-libs' 'libjpeg-turbo' 'lapack')
+optdepends=('pmvs2: for dense reconstruction and meshing' 
+	    'mve: for dense reconstruction and meshing'
+	    'perl-image-exiftool: for Exif manipulation')
+
+# The git repo is detected by the 'git:' or 'git+' beginning. The branch
+# '$pkgname' is then checked out upon cloning, expediating versioning:
+
+source=("$pkgname"::'git+https://github.com/openMVG/openMVG.git'
+	license.libmv
+	license.openMVG
+	README.md
+	SfM_GlobalPipeline.py
+	SfM_SequentialPipeline.py
+	tutorial_demo.py
+	cameraGenerated.txt
+	mvg2mve.py
+	mvg2pmvs.py)
+        
+# Because the sources are not static, skip Git checksum:
+md5sums=('SKIP'
+	'a161769beb537364a621ee6ea29f5718'
+	'815ca599c9df247a0c7f619bab123dad'
+	'488a9ab7ba5b15769f404d2080452967'
+	'SKIP'
+	'SKIP'
+	'SKIP'
+	'SKIP'
+	'SKIP'
+	'SKIP')
+
+pkgver() {
+    cd "${srcdir}/${pkgbase%-git}"
+    git describe --long | sed -r 's/([^-]*-g)/r\1/;s/-/./g'
+}
+        
+
+prepare() {
+    cd "$srcdir/$pkgname"
+    git submodule init
+    git submodule update
+}
+
+build() {
+    unset CPPFLAGS
+    unset CFLAGS
+    unset CXXFLAGS
+    unset LDFLAGS
+    cd "$srcdir/$pkgname/src"
+    mkdir -pv build
+    cd build
+#    cmake -DOpenMVG_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr/local . ..
+     cmake -DOpenMVG_BUILD_TESTS=ON -DOpenMVG_BUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release . ..
+    make
+}
+
+package_openMVG() {
+
+# to check to simplify exe copy: find -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary'
+    pkgdesc="open Multiple View Geometry library for computer-vision"
+    provides=('openMVG-v0.8' 'openMVG')
+    conflicts=('openMVG-v0.7')
+    replaces=('openMVG-v0.8')
+
+    cd "$srcdir/$pkgname/src/build"
+    make DESTDIR="$pkgdir" install
+    
+    # move and install camera database in appropriate dir
+    install -dm644  "${pkgdir}/usr/local/etc/openMVG"
+    mv "${pkgdir}/usr/local/share/openMVG/sensor_width_camera_database.txt" "${pkgdir}/usr/local/etc/openMVG"
+#    install -Dm644 "$srcdir/cameraGenerated.txt" "${pkgdir}/usr/local/etc/openMVG/cameraGenerated.txt"
+    
+    # At this point, get rid off devel stuff. We'll place them later into openMVG-devel
+    cd "$pkgdir/usr/local"
+    rm -fr lib
+    rm -fr share
+    rm -fr include
+
+    install -dm755 "${pkgdir}"/usr/local/sbin
+    install -m755 "$srcdir/SfM_GlobalPipeline.py" "${pkgdir}/usr/local/sbin/SfM_GlobalPipeline.py"
+    install -m755 "$srcdir/SfM_SequentialPipeline.py" "${pkgdir}/usr/local/sbin/SfM_SequentialPipeline.py"
+    install -m755 "$srcdir/mvg2mve.py" "${pkgdir}/usr/local/sbin/mvg2mve.py"
+    install -m755 "$srcdir/mvg2pmvs.py" "${pkgdir}/usr/local/sbin/mvg2pmvs.py"
+
+# Memo for PY: hmmmm ... v09 produces a lib/pkgconfig/flann.pc Maybe conflicting with original flann needed for other things. Got to see that with Pierre M. posted issue 409 on openMVG GH.
+    # licence
+    install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
+    cp $startdir/license* "${pkgdir}/usr/share/licenses/${pkgname}/"
+    cp $startdir/README* "${pkgdir}/usr/share/licenses/${pkgname}/"
+    cp $startdir/LICENSE* "${pkgdir}/usr/share/licenses/${pkgname}/"
+    cp $startdir/COPYING* "${pkgdir}/usr/share/licenses/${pkgname}/"
+}
+
+package_openMVG-tests() {
+    depends=('openMVG-v0.9')
+    provides=('openMVG-tests-v0.9' 'openMVG-tests')
+    conflicts=('openMVG-tests-v0.7' 'openMVG-tests-v0.8')
+    replaces=('openMVG-tests-v0.9')
+    pkgdesc="openMVG unit tests."
+    
+    cd "$srcdir/$pkgbase/src/build"
+    
+    install -dm755 "${pkgdir}"/usr/local/bin
+    
+    cp -a "$srcdir/$pkgbase/src"/build/Linux-x86_64-Release/openMVG_test* "${pkgdir}"/usr/local/bin
+    
+    # install Python script for openMVG suite
+    install -Dm755 "$srcdir/tutorial_demo.py" "${pkgdir}/usr/local/sbin/tutorial_demo.py"
+    
+}
+
+package_openMVG_samples() {
+    depends=('openMVG-v0.9')
+    provides=('openMVG-tests-v0.9' 'openMVG-tests')
+    conflicts=('openMVG-tests-v0.7' 'openMVG-tests-v0.8')
+    replaces=('openMVG-tests-v0.9')
+    pkgdesc="openMVG samples."
+    
+    cd "$srcdir/$pkgbase/src/build"
+    
+    install -dm755 "${pkgdir}"/usr/local/bin
+    
+    cp -a "$srcdir/$pkgbase/src"/build/Linux-x86_64-Release/openMVG_sample* "${pkgdir}"/usr/local/bin
+    cp -a "$srcdir/$pkgbase/src"/build/Linux-x86_64-Release/main_svgSample "${pkgdir}"/usr/local/bin
+}
+
+package_openMVG-devel(){
+    depends=('openMVG-v0.9')
+    provides=('openMVG-devel')
+    conflicts=('openMVG-devel')
+    replaces=('openMVG-devel')
+    pkgdesc="Provides devel stuff of openMVG."
+
+    cd "$srcdir/$pkgbase/src/build"
+
+    # reinstall openMVG into $pkgdir/usr/local
+    make DESTDIR="$pkgdir" install
+
+    # keep only devel stuff
+    cd "$pkgdir/usr/local"
+    rm -fr bin
+    
+    # Finish: clean git fetched stuff
+#    rm -fr $startdir/src
+        
+}
+
