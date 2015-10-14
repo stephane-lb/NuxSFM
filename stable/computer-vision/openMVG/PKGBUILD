@@ -16,7 +16,7 @@ arch=('x86_64')
 url="http://imagine.enpc.fr/~moulonp/openMVG/"
 groups=('computer-vision' 'sfm')
 license=('MPL 2.0')
-depends=('libjpeg-turbo' 'libxxf86vm' 'libxi' 'libxrandr' 'graphviz' 'libpng' 'blas' 'libgl' 'lapack')
+
 makedepends=('binutils' 'mesa' 'libgl' 'cmake' 'git' 'libxfixes' 'blas' 'glpk' 'doxygen' 'gcc-libs' 'libjpeg-turbo' 'lapack')
 optdepends=('pmvs2: for dense reconstruction and meshing' 
 	    'mve: for dense reconstruction and meshing'
@@ -74,11 +74,12 @@ build() {
 }
 
 package_openMVG() {
+    depends=('libjpeg-turbo' 'libxxf86vm' 'libxi' 'libxrandr' 'graphviz' 'libpng' 'blas' 'libgl' 'lapack')
 
 # to check to simplify exe copy: find -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary'
     pkgdesc="open Multiple View Geometry library for computer-vision"
-    provides=('openMVG-v0.8' 'openMVG')
-    conflicts=('openMVG-v0.7')
+    provides=('openMVG-v0.9' 'openMVG')
+    conflicts=('openMVG-v0.8')
     replaces=('openMVG-v0.8')
 
     cd "$srcdir/$pkgname/src/build"
