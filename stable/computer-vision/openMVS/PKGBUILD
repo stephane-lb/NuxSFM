@@ -4,28 +4,32 @@
 
 pkgbase=('openMVS')
 pkgname=('openMVS')
-pkgver=v0.8
-pkgrel=1.1
-pkgdesc="open Multiple View Geometry library for computer-vision. Version Paracheirodon simulans"
+pkgver=v0.5.r26.ga50b4d4
+pkgrel=1
+pkgdesc="OpenMVS (Multi-View Stereo) is a library for computer-vision scientists and especially targeted to the Multi-View Stereo reconstruction community."
 arch=('x86_64')
-url="http://imagine.enpc.fr/~moulonp/openMVS/"
+url="http://cdcseacave.github.io/openMVS/"
 groups=('computer-vision' 'sfm')
 license=('MPL 2.0')
-depends=('eigen' 'opencv' 'ceres-solver' 'cgal' 'boost-libs')
-optdepends=('openMVG')
-makedepends=('eigen' 'opencv' 'ceres-solver' 'cgal' 'google-breakpad' 'boost' 'git' 'subversion' 'openMVG-devel')
+depends=('eigen>=3.2' 'opencv-git' 'ceres-solver>=1.10' 'cgal>=4.2' 'boost-libs>=1.59' 'openMVG>=v0.8.1')
+makedepends=('eigen>=3.2' 'ceres-solver>=1.10' 'cgal>=4.2' 'boost-libs>=1.59' 'git' 'subversion' 'openMVG-devel>=v0.8.1' 'boost')
 provides=('openMVS')
 conflicts=('openMVS')
 replaces=('openMVS')
 
 # The git repo is detected by the 'git:' or 'git+' beginning. The branch
 # '$pkgname' is then checked out upon cloning, expediating versioning:
-source=("$pkgname"::'git+https://github.com/cdcseacave/openMVS.git'
+source=("$pkgname"::'git+https://github.com/OpenMVS/openMVS'
 	'VCGLib.patch')
-
+    
 # Because the sources are not static, skip Git checksum:
 md5sums=('SKIP'
 	'237c454f539a310fdae7b843fa3a6495')
+
+pkgver() {
+    cd "${srcdir}/${pkgbase%-git}"
+        git describe --long | sed -r 's/([^-]*-g)/r\1/;s/-/./g'
+}
 
 prepare() {
     cd "$srcdir/$pkgname"
@@ -36,20 +40,20 @@ prepare() {
     cd $srcdir
     svn checkout svn://svn.code.sf.net/p/vcg/code/trunk/vcglib vcglib
     cd $srcdir/vcglib
-#    patch -Np0 -i $srcdir/VCGLib.patch
+    patch -Np0 -i $srcdir/VCGLib.patch
 }
 
 build() {
-    unset CPPFLAGS
-    unset CFLAGS
-    unset CXXFLAGS
-    unset LDFLAGS
+#    unset CPPFLAGS
+#    unset CFLAGS
+#    unset CXXFLAGS
+#    unset LDFLAGS
     
-#    export CC=/usr/bin/gcc-4.9
-#    export CXX=/usr/bin/g++-4.9
-#    export CPP=/usr/bin/cpp-4.9
-#    export LD=/usr/bin/gcc-4.9
-    
+#    export CC="gcc-4.9"
+#    export CXX="g++-4.9"
+#    export CPP="cpp-4.9"
+#    export LD="gcc-4.9"
+
     cd "$srcdir/$pkgname"
     mkdir -pv openMVS_Build
     cd openMVS_Build
@@ -59,15 +63,30 @@ build() {
     
     cmake -DCMAKE_BUILD_TYPE=Release -DVCG_DIR="$srcdir/vcglib" \
 	    -DCERES_DIR="/usr/local/share/Ceres" \
+	    -DOpenMVG_DIR="/usr/local" \
+	    -DOpenCV_DIR="/usr/local/share/opencv" \
+	    -DOpenMVS_USE_CUDA=OFF \
+	    -DOpenMVS_USE_BREAKPAD=OFF \
 	    -DOpenCV_CAN_BREAK_BINARY_COMPATIBILITY=OFF . ..
 #	    -DOpenCV_INCLUDE_DIR
+#	    -DBUILD_SHARED_LIBS=ON \
     make
 }
 
 package() {
-    cd "$srcdir/$pkgname/src/build"        
+    cd "$srcdir/$pkgname/openMVS_Build"    
 
+   # reinstall openMVS binaries into $pkgdir/usr/local/bin
+
+    for files in DensifyPointCloud  InterfaceOpenMVG  InterfaceOpenMVG2  ReconstructMesh  RefineMesh  TextureMesh
+	do 
+	    install -Dm755 "$srcdir/$pkgname/openMVS_Build/bin/$files"  "$pkgdir/usr/local/bin/$files"
+    done
+       
     # licence
-    install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
+    for files in COPYRIGHT.md  LICENSE README.md
+	do
+	install -Dm755 "$srcdir/$pkgname/$files" "$pkgdir/usr/share/licenses/$pkgname/$files"
+    done
 }
 
