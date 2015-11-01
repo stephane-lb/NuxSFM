@@ -49,6 +49,10 @@ build() {
     qmake # remember to set qt5 as default in /etc/xdg. See https://wiki.archlinux.org/index.php/Qt#Default_Qt_toolkit
     make
 
+    # get & build fssr which need to be located at the same dir. level as main mve sources
+    cd "${srcdir}"
+    git clone https://github.com/simonfuhrmann/fssr.git
+    make -C fssr
 }
 
 package() {
@@ -66,8 +70,19 @@ package() {
 	cd ..
     done
     
+    # copy fssr binaries    
+    APPS="fssrecon mesh2pset meshalign meshclean"
+    for aps in $APPS
+    do
+	cd "${srcdir}/fssr/apps/$aps"
+	install -Dvm755 -v $aps "$pkgdir/usr/local/bin/$aps"
+	cd ..
+    done
+    
     # install licences
     install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
     install -m644 $srcdir/$pkgname/README.txt "${pkgdir}/usr/share/licenses/${pkgname}/"
     install -m644 $srcdir/$pkgname/LICENSE.txt "${pkgdir}/usr/share/licenses/${pkgname}/"
+    install -m644 $srcdir/fssr/COPYING.txt "${pkgdir}/usr/share/licenses/${pkgname}/"
+    install -m644 $srcdir/fssr/README.txt "${pkgdir}/usr/share/licenses/${pkgname}/"
 }
