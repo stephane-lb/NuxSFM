@@ -1,0 +1,47 @@
+# $Id: PKGBUILD 202436 2013-12-21 19:41:12Z bpiotrowski $
+# Maintainer: Ronald van Haren <ronald.archlinux.org>
+# Contributor: Juergen Hoetzel <juergen.archlinux.org>
+# Contributor: Tom Newsom <Jeepster@gmx.co.uk>
+# NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
+
+pkgbase=gsl
+pkgname=('gsl' 'gsl-devel')
+pkgver=1.16
+pkgrel=1
+pkgdesc="The GNU Scientific Library (GSL) is a modern numerical library for C and C++ programmers"
+url="http://www.gnu.org/software/gsl/gsl.html"
+source=("http://ftp.gnu.org/gnu/gsl/$pkgname-$pkgver.tar.gz")
+install=gsl.install
+license=('GPL')
+arch=('i686' 'x86_64')
+depends=('glibc' 'bash')
+sha1sums=('210af9366485f149140973700d90dc93a4b6213e')
+
+build() {
+    unset LDFLAGS
+
+    cd "${srcdir}/${pkgbase}-${pkgver}"
+    ./configure --prefix=/usr/local
+    make
+}
+
+
+package_gsl() {
+    provides=('gsl')
+    conflicts=('gsl')
+    replaces=('gsl')
+    groups=('scientifics' 'extra')
+    cd "${srcdir}/${pkgbase}-${pkgver}"
+    make DESTDIR="${pkgdir}" install
+    rm -fr ${pkgdir}/usr/local/include
+}
+
+package_gsl-devel() {
+    depends=('gsl')
+    groups=('devel')
+    cd "${srcdir}/${pkgbase}-${pkgver}"
+    make DESTDIR="${pkgdir}" install
+    rm -fr ${pkgdir}/usr/local/{bin,share,lib}
+}
+
+
