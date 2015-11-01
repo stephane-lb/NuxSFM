@@ -16,11 +16,8 @@ arch=('x86_64')
 url="http://imagine.enpc.fr/~moulonp/openMVG/"
 groups=('computer-vision' 'sfm')
 license=('MPL 2.0')
-
-makedepends=('binutils' 'mesa' 'libgl' 'cmake' 'git' 'libxfixes' 'blas' 'glpk' 'doxygen' 'gcc-libs' 'libjpeg-turbo' 'lapack')
-optdepends=('pmvs2: for dense reconstruction and meshing' 
-	    'mve: for dense reconstruction and meshing'
-	    'perl-image-exiftool: for Exif manipulation')
+makedepends=('binutils' 'mesa' 'libgl' 'cmake' 'git' 'libxfixes' 'blas' 'glpk' 'doxygen' 'gcc-libs' 'libjpeg-turbo' 'lapack' 'ceres-solver' 'flann' 'opencv-nuxsfm-devel')
+optdepends=('perl-image-exiftool: for Exif manipulation')
 
 # The git repo is detected by the 'git:' or 'git+' beginning. The branch
 # '$pkgname' is then checked out upon cloning, expediating versioning:
@@ -61,20 +58,30 @@ prepare() {
 }
 
 build() {
-    unset CPPFLAGS
-    unset CFLAGS
-    unset CXXFLAGS
-    unset LDFLAGS
+    #unset CPPFLAGS
+    #unset CFLAGS
+    #unset CXXFLAGS
+    #unset LDFLAGS
+    
+#    export CC="gcc-4.9"
+#    export CXX="g++-4.9"
+    
+    
     cd "$srcdir/$pkgname/src"
     mkdir -pv build
     cd build
-#    cmake -DOpenMVG_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr/local . ..
-     cmake -DOpenMVG_BUILD_TESTS=ON -DOpenMVG_BUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release . ..
+    cmake -DOpenMVG_BUILD_TESTS=ON \
+	-DOpenMVG_BUILD_EXAMPLES=ON \
+	-DCMAKE_BUILD_TYPE=Release \
+	-DOpenMVG_USE_OPENCV=ON \
+	-DOpenCV_DIR="/usr/local/share/opencv" \
+	-DFLANN_LIBRARY="/usr/local" \
+	-DCeres_DIR=/usr/local/share/Ceres . ..
     make
 }
 
 package_openMVG() {
-    depends=('libjpeg-turbo' 'libxxf86vm' 'libxi' 'libxrandr' 'graphviz' 'libpng' 'blas' 'libgl' 'lapack')
+    depends=('libjpeg-turbo' 'libxxf86vm' 'libxi' 'libxrandr' 'graphviz' 'libpng' 'blas' 'libgl' 'lapack' 'flann' 'opencv-nuxsfm' 'python')
 
 # to check to simplify exe copy: find -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary'
     pkgdesc="open Multiple View Geometry library for computer-vision"
@@ -102,7 +109,6 @@ package_openMVG() {
     install -m755 "$srcdir/mvg2mve.py" "${pkgdir}/usr/local/sbin/mvg2mve.py"
     install -m755 "$srcdir/mvg2pmvs.py" "${pkgdir}/usr/local/sbin/mvg2pmvs.py"
 
-# Memo for PY: hmmmm ... v09 produces a lib/pkgconfig/flann.pc Maybe conflicting with original flann needed for other things. Got to see that with Pierre M. posted issue 409 on openMVG GH.
     # licence
     install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
     cp $startdir/license* "${pkgdir}/usr/share/licenses/${pkgname}/"
@@ -122,7 +128,7 @@ package_openMVG-tests() {
     
     install -dm755 "${pkgdir}"/usr/local/bin
     
-    cp -a "$srcdir/$pkgbase/src"/build/Linux-x86_64-Release/openMVG_test* "${pkgdir}"/usr/local/bin
+    cp -a "$srcdir/$pkgbase/src"/build/Linux-x86_64-Release/*test* "${pkgdir}"/usr/local/bin
     
     # install Python script for openMVG suite
     install -Dm755 "$srcdir/tutorial_demo.py" "${pkgdir}/usr/local/sbin/tutorial_demo.py"
@@ -159,6 +165,10 @@ package_openMVG-devel(){
     # keep only devel stuff
     cd "$pkgdir/usr/local"
     rm -fr bin
+    # Those files must not exist as we're using external 3rd parties. Conflicting with orginial flann package.
+    rm -f "$pkgdir/usr/local/lib/pkgconfig/flann.pc" 
+    rm -f "$pkgdir/usr/local/lib/libceres.a"
+    rm -f "$pkgdir/usr/local/lib/libflann_cpp_s.a"
     
     # Finish: clean git fetched stuff
 #    rm -fr $startdir/src

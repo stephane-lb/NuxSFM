@@ -1,13 +1,15 @@
 #!/usr/bin/python
 #! -*- encoding: utf-8 -*-
 
+# v1 : MVE2 support, october 2015
+
 #### Modify general settings before running the script!
 
 # Multi-View Environment and Floating Scale Surface Reconstruction (MVE/FSSR) script for openMVG
 #
-# v0:initiation, 05/20/2015, by Pierre-Yves Paranthoën < py.paranthoen at you know gmail dot com >
+# v0:initiation, 05/20/2015, by Pierre-Yves Paranthoen < py.paranthoen at you know gmail dot com >
 #
-# Script is heavily inpired by @vins31 & Pierre Moulon openMVG-0.8 python scripts to keep their logic and use.
+# Script is heavily inpired by @vins31 & Pierre Moulon openMVG-0.8 python scripts to keep the logic and use.
 # It has to be run AFTER SfM_GlobalPipeline.py or SfM_SequentialPipeline.py
 #
 # usage : python mvg2mve.py input_dir output_dir e.g. python mvg2mve.py /home/dataset/images /home/dataset/mve
@@ -42,7 +44,8 @@ Scale=2
 # -d argument specifies the depth map to use, -i specifies the color image to color the point cloud, -n -c -s instructs the application to also generate normals, confidences and scale values for every sample
 hugePCsettings="-ddepth-L2 -iundist-L2 -n -c -s"
 
-# Run openMVG2PMVS/cmvs/pmvs pipeline
+# Run openMVG2MVE2 and MVE2 pipeline
+
 # given argument test
 if len(sys.argv) < 3:
     print ("Usage %s input_dir output_dir" % sys.argv[0])
@@ -57,7 +60,7 @@ output_dir = sys.argv[2]
 #if not os.path.exists(output_dir):
 #  os.mkdir(output_dir)
 
-# Final arguments given
+# Print out final arguments given
 reconstruction_dir = os.path.join(input_dir, reconstruction_type)
 print ("You gave:", "input_dir=", reconstruction_dir, "output_dir=", output_dir)
 
