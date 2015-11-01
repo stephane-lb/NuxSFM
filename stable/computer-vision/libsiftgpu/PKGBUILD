@@ -2,7 +2,7 @@
 # $Id:.
 # NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
 
-pkgname=('libsiftgpu-CUDA' 'libsiftgpu-NONCUDA')
+pkgname=('libsiftgpu-CUDA' 'libsiftgpu-MESA')
 pkgver=400
 pkgrel=1.1
 pkgdesc="SiftGPU Libraries: A GPU Implementation of Scale Invariant Feature Transform (SIFT)"
@@ -10,7 +10,7 @@ arch=('x86_64')
 url="http://www.cs.unc.edu/~ccwu/siftgpu/"
 groups=('computer-vision' 'sfm')
 license=('proprietary')
-makedepends=('devil' 'cuda' 'gcc' 'automake' 'autoconf')
+makedepends=('devil' 'cuda' 'gcc' 'automake' 'autoconf' 'glew' 'freeglut')
 options=('strip')
 source=("http://wwwx.cs.unc.edu/~ccwu/cgi-bin/siftgpu.cgi?SiftGPU-V${pkgver}.zip"
 	"license.txt"
@@ -54,7 +54,7 @@ package_libsiftgpu-CUDA() {
     install -m644 $srcdir/README.txt "${pkgdir}/usr/share/licenses/${pkgname}/"
 }
 
-package_libsiftgpu-NONCUDA() {
+package_libsiftgpu-MESA() {
 	depends=('glew' 'freeglut' 'devil')
 	provides=(libsiftgpu sift)
 	replaces=(libsiftgpu sift)
