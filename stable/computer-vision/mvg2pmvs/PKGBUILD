@@ -1,0 +1,23 @@
+# vim: set ts=2 sw=2 et:
+# $Id:.
+# NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
+
+pkgname=mvg2pmvs
+pkgver=0
+pkgrel=1
+pkgdesc="This script exports openMVG results to PMVS"
+license=('GPL')
+arch=('any')
+url="http://www.nuxsfm.org"
+depends=('python' 'openMVG>=v0.8' 'pmvs2')
+source=("mvg2pmvs.py")
+md5sums=('6415e046c6300d3622f26c47c27aea75')
+provides=('mvg2pmvs')
+conflicts=('mvg2pmvs')
+replaces=('mvg2pmvs')
+
+package() {
+  install -d "$pkgdir"/usr/local/sbin
+  install -m755 $pkgname.py "$pkgdir"/usr/local/sbin
+}
+
