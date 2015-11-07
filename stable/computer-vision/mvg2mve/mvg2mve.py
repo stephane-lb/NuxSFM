@@ -7,7 +7,7 @@
 
 # Multi-View Environment and Floating Scale Surface Reconstruction (MVE/FSSR) script for openMVG
 #
-# v0:initiation, 05/20/2015, by Pierre-Yves Paranthoen < py.paranthoen at you know gmail dot com >
+# v0:initiation, 05/20/2015, by Pierre-Yves Paranthoen < nuxsfm at you know gmail dot com >
 #
 # Script is heavily inpired by @vins31 & Pierre Moulon openMVG-0.8 python scripts to keep the logic and use.
 # It has to be run AFTER SfM_GlobalPipeline.py or SfM_SequentialPipeline.py
