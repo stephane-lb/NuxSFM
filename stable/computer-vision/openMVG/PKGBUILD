@@ -29,17 +29,13 @@ source=("$pkgname"::'git+https://github.com/openMVG/openMVG.git'
 	SfM_GlobalPipeline.py
 	SfM_SequentialPipeline.py
 	tutorial_demo.py
-	cameraGenerated.txt
-	mvg2mve.py
-	mvg2pmvs.py)
+	cameraGenerated.txt)
         
 # Because the sources are not static, skip Git checksum:
 md5sums=('SKIP'
 	'a161769beb537364a621ee6ea29f5718'
 	'815ca599c9df247a0c7f619bab123dad'
 	'488a9ab7ba5b15769f404d2080452967'
-	'SKIP'
-	'SKIP'
 	'SKIP'
 	'SKIP'
 	'SKIP'
@@ -106,8 +102,6 @@ package_openMVG() {
     install -dm755 "${pkgdir}"/usr/local/sbin
     install -m755 "$srcdir/SfM_GlobalPipeline.py" "${pkgdir}/usr/local/sbin/SfM_GlobalPipeline.py"
     install -m755 "$srcdir/SfM_SequentialPipeline.py" "${pkgdir}/usr/local/sbin/SfM_SequentialPipeline.py"
-    install -m755 "$srcdir/mvg2mve.py" "${pkgdir}/usr/local/sbin/mvg2mve.py"
-    install -m755 "$srcdir/mvg2pmvs.py" "${pkgdir}/usr/local/sbin/mvg2pmvs.py"
 
     # licence
     install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
