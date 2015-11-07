@@ -5,15 +5,15 @@
 # NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
 
 pkgbase=gsl
-pkgname=('gsl' 'gsl-devel')
+pkgname=('gsl-nuxsfm' 'gsl-nuxsfm-devel')
 pkgver=1.16
 pkgrel=1
 pkgdesc="The GNU Scientific Library (GSL) is a modern numerical library for C and C++ programmers"
 url="http://www.gnu.org/software/gsl/gsl.html"
-source=("http://ftp.gnu.org/gnu/gsl/$pkgname-$pkgver.tar.gz")
+source=("http://ftp.gnu.org/gnu/gsl/$pkgbase-$pkgver.tar.gz")
 install=gsl.install
 license=('GPL')
-arch=('i686' 'x86_64')
+arch=('x86_64')
 depends=('glibc' 'bash')
 sha1sums=('210af9366485f149140973700d90dc93a4b6213e')
 
@@ -26,19 +26,19 @@ build() {
 }
 
 
-package_gsl() {
+package_gsl-nuxsfm() {
     provides=('gsl')
-    conflicts=('gsl')
-    replaces=('gsl')
+    conflicts=('gsl' 'gsl-nuxsfm')
+    replaces=('gsl' 'gsl-nuxsfm')
     groups=('scientifics' 'extra')
     cd "${srcdir}/${pkgbase}-${pkgver}"
     make DESTDIR="${pkgdir}" install
     rm -fr ${pkgdir}/usr/local/include
 }
 
-package_gsl-devel() {
-    depends=('gsl')
-    groups=('devel')
+package_gsl-nuxsfm-devel() {
+    depends=('gsl-nuxsfm')
+    groups=('devel' 'nuxsfm-devel')
     cd "${srcdir}/${pkgbase}-${pkgver}"
     make DESTDIR="${pkgdir}" install
     rm -fr ${pkgdir}/usr/local/{bin,share,lib}
