@@ -3,7 +3,7 @@
 # NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
 
 pkgbase=('openMVG')
-pkgname=('openMVG' 'openMVG-qt' 'openMVG-tests' 'openMVG-devel' 'openMVG_samples')
+pkgname=('openMVG' 'openMVG-tests' 'openMVG-devel' 'openMVG_samples')
 pkgver=v0.9.r0.gf0889f0
 pkgrel=1
 pkgdesc="open Multiple View Geometry library for computer-vision by Pierre Moulon. Nick name: 'Corydoras sterbai'.
@@ -54,6 +54,15 @@ prepare() {
 }
 
 build() {
+    #unset CPPFLAGS
+    #unset CFLAGS
+    #unset CXXFLAGS
+    #unset LDFLAGS
+    
+#    export CC="gcc-4.9"
+#    export CXX="g++-4.9"
+    
+    
     cd "$srcdir/$pkgname/src"
     mkdir -pv build
     cd build
@@ -69,7 +78,9 @@ build() {
 
 package_openMVG() {
     depends=('libjpeg-turbo' 'libxxf86vm' 'libxi' 'libxrandr' 'graphviz' 'libpng' 'blas' 'libgl' 'lapack' 'flann' 'opencv-nuxsfm' 'python')
-    pkgdesc="open Multiple View Geometry library for computer-vision by Pierre Moulon. Nick name: 'Corydoras sterbai'"
+
+# to check to simplify exe copy: find -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary'
+    pkgdesc="open Multiple View Geometry library for computer-vision"
     provides=('openMVG-v0.9' 'openMVG')
     conflicts=('openMVG-v0.8')
     replaces=('openMVG-v0.8')
@@ -87,8 +98,6 @@ package_openMVG() {
     rm -fr lib
     rm -fr share
     rm -fr include
-    
-    # Remove ui_openMVG_control_points_registration from here. QT GUI application will have its own package.
 
     install -dm755 "${pkgdir}"/usr/local/sbin
     install -m755 "$srcdir/SfM_GlobalPipeline.py" "${pkgdir}/usr/local/sbin/SfM_GlobalPipeline.py"
@@ -102,31 +111,8 @@ package_openMVG() {
     cp $startdir/COPYING* "${pkgdir}/usr/share/licenses/${pkgname}/"
 }
 
-package_openMVG-qt() {
-    depends=('openMVG-v0.9')
-    provides=('openMVG-tests-v0.9' 'openMVG-tests')
-    conflicts=('openMVG-tests-v0.7' 'openMVG-tests-v0.8')
-    replaces=('openMVG-tests-v0.9')
-    pkgdesc="openMVG Ground control point support: QT GUI application & Rigid Registration to GCP"
-    
-    cd "$srcdir/$pkgbase/src/build"
-    make DESTDIR="$pkgdir" install
-    
-    # Delete everything except what we needs here.
-    cd "$pkgdir/usr/local"
-    rm -fr lib
-    rm -fr share
-    rm -fr include
-    
-    cd bin
-    find . -type f -not -name 'ui_openMVG_control_points_registration' | xargs rm
-    
-               
-
-}
-
 package_openMVG-tests() {
-    depends=('openMVG-v0.9' 'git')
+    depends=('openMVG-v0.9')
     provides=('openMVG-tests-v0.9' 'openMVG-tests')
     conflicts=('openMVG-tests-v0.7' 'openMVG-tests-v0.8')
     replaces=('openMVG-tests-v0.9')
