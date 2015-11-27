@@ -11,7 +11,7 @@ arch=('x86_64')
 url="http://cdcseacave.github.io/openMVS/"
 groups=('computer-vision' 'sfm')
 license=('MPL 2.0')
-depends=('eigen>=3.2' 'opencv-git' 'ceres-solver>=1.10' 'cgal>=4.2' 'boost-libs>=1.59' 'openMVG>=v0.8.1' 'google-glog' 'suitesparse')
+depends=('eigen>=3.2' 'opencv-git' 'ceres-solver>=1.10' 'cgal>=4.2' 'boost-libs>=1.59' 'openMVG>=v0.8.1')
 makedepends=('eigen>=3.2' 'ceres-solver>=1.10' 'cgal>=4.2' 'boost-libs>=1.59' 'git' 'subversion' 'openMVG-devel>=v0.8.1' 'boost')
 provides=('openMVS')
 conflicts=('openMVS')
@@ -44,9 +44,22 @@ prepare() {
 }
 
 build() {
+#    unset CPPFLAGS
+#    unset CFLAGS
+#    unset CXXFLAGS
+#    unset LDFLAGS
+    
+#    export CC="gcc-4.9"
+#    export CXX="g++-4.9"
+#    export CPP="cpp-4.9"
+#    export LD="gcc-4.9"
+
     cd "$srcdir/$pkgname"
     mkdir -pv openMVS_Build
     cd openMVS_Build
+    
+    pwd
+    echo "toto"
     
     cmake -DCMAKE_BUILD_TYPE=Release -DVCG_DIR="$srcdir/vcglib" \
 	    -DCERES_DIR="/usr/local/share/Ceres" \
@@ -55,6 +68,8 @@ build() {
 	    -DOpenMVS_USE_CUDA=OFF \
 	    -DOpenMVS_USE_BREAKPAD=OFF \
 	    -DOpenCV_CAN_BREAK_BINARY_COMPATIBILITY=OFF . ..
+#	    -DOpenCV_INCLUDE_DIR
+#	    -DBUILD_SHARED_LIBS=ON \
     make
 }
 
@@ -63,7 +78,7 @@ package() {
 
    # reinstall openMVS binaries into $pkgdir/usr/local/bin
 
-    for files in DensifyPointCloud  InterfaceOpenMVG  InterfaceVisualSFM ReconstructMesh  RefineMesh  TextureMesh
+    for files in DensifyPointCloud  InterfaceOpenMVG  InterfaceOpenMVG2  ReconstructMesh  RefineMesh  TextureMesh
 	do 
 	    install -Dm755 "$srcdir/$pkgname/openMVS_Build/bin/$files"  "$pkgdir/usr/local/bin/$files"
     done
