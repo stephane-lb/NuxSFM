@@ -10,7 +10,7 @@ pkgdesc="OpenMVS (Multi-View Stereo) is a library for computer-vision scientists
 arch=('x86_64')
 url="http://cdcseacave.github.io/openMVS/"
 groups=('computer-vision' 'sfm')
-license=('MPL 2.0')
+license=('AGPL')
 depends=('eigen>=3.2' 'opencv-git' 'ceres-solver>=1.10' 'cgal>=4.2' 'boost-libs>=1.59' 'openMVG>=v0.8.1' 'google-glog' 'suitesparse')
 makedepends=('eigen>=3.2' 'ceres-solver>=1.10' 'cgal>=4.2' 'boost-libs>=1.59' 'git' 'subversion' 'openMVG-devel>=v0.8.1' 'boost')
 provides=('openMVS')
