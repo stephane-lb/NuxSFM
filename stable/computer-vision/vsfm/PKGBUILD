@@ -1,0 +1,50 @@
+# vim: set ts=2 sw=2 et:
+# $Id:.
+# NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
+
+pkgname=VisualSFM
+_pkgname=vsfm
+pkgver=0.5.26
+pkgrel=1.1
+pkgdesc="VisualSFM : A Visual Structure from Motion System"
+arch=('x86_64')
+url="http://ccwu.me/vsfm/"
+license=('auhtor')
+groups=('sfm' 'computer-vision')
+url=('http://ccwu.me/vsfm')
+depends=('gsl' 'freeglut' 'pmvs2' 'pba' 'libsiftgpu' 'blas' 'boost' 'gtk2' 'imagemagick' 'gdk-pixbuf2' 'glew' 'boost' 'xorg-server' 'cuda' 'nvidia-libgl')
+makedepends=('gcc' 'make' 'boost' 'lapack' 'automake' 'autoconf' 'gtk2' 'glew' 'devil' 'imagemagick' 'gsl' 'gdk-pixbuf2' 'gtk2' 'cuda' 'nvidia-libgl')
+provides=('VisualSFM')
+conflicts=('VisualSFM')
+replaces=('VisualSFM')
+options=()
+install=vsfm.install
+source=("http://ccwu.me/vsfm/download/VisualSFM_linux_64bit.zip"
+	vsfm.install)
+groups=('computer-vision' 'sfm')
+md5sums=('25fcca5e320a9e97131e87abdf3b7f61'
+	'SKIP')
+
+build() {
+        cd "$srcdir/${_pkgname}"
+        make
+}
+
+package() {
+
+        cd "$srcdir/${_pkgname}"
+        install -d "$pkgdir"/usr/local/bin
+
+        install -Dm755 bin/VisualSFM  "$pkgdir"/usr/local/bin/VisualSFM
+
+	# put logs dir in /var.log to suit standards
+        install -Dm777 -d "$pkgdir"/var/log/vsfm
+        ln -sfv /var/log/VisualSFM "$pkgdir/usr/local/bin/log"
+        
+	install -m755 -d "${pkgdir}/usr/share/licenses/${_pkgname}"
+	install -m644 $startdir/license "${pkgdir}/usr/share/licenses/${_pkgname}/"
+
+	install -Dm644 ../../vsfm.desktop "${pkgdir}/usr/share/applications/kde4/vsfm.desktop"
+	install -Dm644 ../../VisualSFM.png "${pkgdir}/usr/share/icons/oxygen/32x32/apps/VisualSFM.png"
+    
+}

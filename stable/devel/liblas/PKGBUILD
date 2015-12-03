@@ -3,17 +3,16 @@
 # Maintainer (NuxSFM)   : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
 
 pkgbase=liblas
-pkgname=('liblas-git' 'liblas-devel')
+pkgname=('liblas-nuxsfm' 'liblas-devel')
 pkgver=0
 pkgrel=1
-pkgdesc="libLAS is a C/C++ library for reading and writing the very common LAS LiDAR format"
+pkgdesc="NuxSFM liblas. libLAS is a C/C++ library for reading and writing the very common LAS LiDAR format."
 url="http://www.liblas.org"
 groups=('devel')
 license=('BSD')
 arch=('x86_64')
 depends=('boost>=1.38.0' 'gdal>=1.7.0' 'libgeotiff>=1.3.0' 'laszip')
 makedepends=('git' 'cmake' 'gcc>=4.0')
-conflicts=('liblas')
 source=("$pkgname"::'git://github.com/libLAS/libLAS.git')
 md5sums=('SKIP')
 
@@ -24,7 +23,7 @@ pkgver() {
 }
 
 build() {
-    cd "$srcdir/$pkgbase-git"	
+    cd "$srcdir/$pkgbase-nuxsfm"	
     if [ -d build ]; then
 	rm -rf build
     fi
@@ -42,17 +41,20 @@ build() {
     make
 }
 
-package_liblas-git() {
+package_liblas-nuxsfm() {
+    provides=('liblas')
+    conflicts=('liblas')
+    provides=('liblas')
     pkgdesc="libLAS binaries and libs"
-    cd "$srcdir/$pkgbase-git/build"
+    cd "$srcdir/$pkgbase-nuxsfm/build"
     make DESTDIR="$pkgdir/" install
     rm -fr "$pkgdir/usr/local/include"
 }
 
 package_liblas-devel() {
     pkgdesc="devel include files of liblas"
-    depends=('liblas-git')
-    cd "$srcdir/$pkgbase-git/build"
+    depends=('liblas')
+    cd "$srcdir/$pkgbase-nuxsfm/build"
     make DESTDIR="$pkgdir/" install
     rm -fr "$pkgdir/usr/local/bin"
     rm -fr "$pkgdir/usr/local/lib"

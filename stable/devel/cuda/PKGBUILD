@@ -1,0 +1,72 @@
+# NuxSFM portage and maintainer: <py.paranthoen at gmail dot com>
+# 01/15/2015
+# LFS 7.6  (non systemd because i simply hate it :-) )
+# versionning convention :
+# pkgrel=xy x=base release (must be fixed, eg NuxSFM rc1: x=1) y=package built version. starts at 1 then 1.1,
+# 1.2 and so on
+
+pkgname=cuda
+pkgver=6.5.14
+pkgrel=1.1
+pkgdesc="NVIDIA's GPU programming toolkit"
+arch=('x86_64')
+url="http://www.nvidia.com/object/cuda_home.html"
+license=('custom:NVIDIA')
+#depends=('opencl-nvidia' 'nvidia')
+replaces=('cuda-toolkit' 'cuda-sdk')
+provides=('cuda-toolkit' 'cuda-sdk')
+optdepends=('gdb: for cuda-gdb')
+options=(!strip staticlibs)
+install=cuda.install
+source=(http://developer.download.nvidia.com/compute/cuda/6_5/rel/installers/cuda_${pkgver}_linux_64.run
+        cuda.sh)
+groups=('devel')
+md5sums=('90b1b8f77313600cc294d9271741f4da'
+         'b673a0e7bbbf27845fca784682078f92')
+
+
+prepare() {
+  sh cuda_${pkgver}_linux_64.run -extract=${srcdir}
+  ./cuda-linux64-rel-*.run --noexec --keep
+  ./cuda-samples-linux-*.run --noexec --keep
+
+  # path hacks
+
+  # 1rd sed line: sets right path to install man files
+  # 2rd sed line: hack to lie installer, now detect launch script by root
+  # 3rd sed line: sets right path in .desktop files and other .desktop stuff (warnings by desktop-file-validate)
+  sed -e "s|/usr/share|${srcdir}/../pkg/${pkgname}/usr/share|g" \
+      -e 's|can_add_for_all_users;|1;|g' \
+      -e 's|=\\"$prefix\\\"|=/opt/cuda|g' -e 's|Terminal=No|Terminal=false|g' -e 's|ParallelComputing|ParallelComputing;|g' \
+      -i pkg/install-linux.pl
+
+  # set right path in Samples Makefiles
+  sed 's|\$cudaprefix\\|\\/opt\\/cuda\\|g' -i pkg/install-sdk-linux.pl
+
+  # use python2
+  find pkg -name '*.py' | xargs sed -i -e 's|env python|env python2|g' -e 's|bin/python|bin/python2|g'
+}
+
+package() {
+  cd pkg
+  perl install-linux.pl -prefix="${pkgdir}/opt/cuda" -noprompt
+#  perl install-sdk-linux.pl -cudaprefix="${pkgdir}/opt/cuda" -prefix="${pkgdir}/opt/cuda/samples" -noprompt
+
+  # allow gcc 4.9 to work
+  sed -i "/unsupported GNU/d" $pkgdir/opt/cuda/include/host_config.h
+
+  install -Dm755 "${srcdir}/cuda.sh" "${pkgdir}/etc/profile.d/cuda.sh"
+
+  mkdir -p "${pkgdir}/usr/share/licenses/${pkgname}"
+  ln -s /opt/cuda/doc/pdf/EULA.pdf "${pkgdir}/usr/share/licenses/${pkgname}/EULA.pdf"
+
+  # remove redundant man and samples
+  rm -fr "${pkgdir}/opt/cuda/doc/man"
+  rm -fr "${pkgdir}/opt/cuda/cuda-samples"
+
+  install -d -m 755 "$pkgdir"/etc/ld.so.conf.d
+  echo "/opt/cuda/lib/$pkgname" > "$pkgdir"/etc/ld.so.conf.d/$pkgname.conf
+  echo "/opt/cuda/lib64/$pkgname" >> "$pkgdir"/etc/ld.so.conf.d/$pkgname.conf
+        
+        
+}

@@ -4,8 +4,8 @@
 
 pkgbase=('ceres-solver')
 pkgname=('ceres-solver')
-pkgver=v0.8
-pkgrel=1.1
+pkgver=1.11.0.r4.g7efc92d
+pkgrel=1
 pkgdesc="Ceres Solver [1] is an open source C++ library for modeling and solving large, complicated optimization problems."
 arch=('x86_64')
 url="http://ceres-solver.org/"
@@ -23,6 +23,12 @@ source=("$pkgname"::'git+https://ceres-solver.googlesource.com/ceres-solver')
 
 # Because the sources are not static, skip Git checksum:
 md5sums=('SKIP')
+
+pkgver() {
+    cd "${srcdir}/${pkgbase%-git}"
+    git describe --long | sed -r 's/([^-]*-g)/r\1/;s/-/./g'
+}
+        
 
 prepare() {
     cd "$srcdir/$pkgname"

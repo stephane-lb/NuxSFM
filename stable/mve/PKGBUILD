@@ -1,0 +1,45 @@
+# vim: set ts=2 sw=2 et:
+# $Id:.
+# NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
+
+pkgname=mve
+pkgver=2
+pkgrel=1
+pkgdesc="The Multi-View Environment, MVE, is an implementation of a complete end-to-end pipeline for image-based geometry reconstruction"
+arch=('x86_64')
+url="http://www.gris.informatik.tu-darmstadt.de/projects/multiview-environment/"
+license=('GPL')
+depends=('libjpeg-turbo' 'libxxf86vm' 'libxi' 'libxrandr' 'libpng' 'libtiff')
+makedepends=('libgl' 'cmake' 'libpng' 'libtiff' 'qt5')
+makedepends=('git')
+conflicts=('mve')
+provides=('mve')
+replaces=('mve')
+groups=('computer-vision' 'sfm')
+source=("$pkgname"::'git+https://github.com/simonfuhrmann/mve.git')
+# Because the sources are not static, skip Git checksum:
+md5sums=('SKIP')
+
+build() {
+    export CFLAGS="$CFLAGS -std=gnu++11"
+    cd "${srcdir}/$pkgname"
+    make
+}
+
+package() {
+    install -d "${pkgdir}/usr/local/bin"
+    
+    # copy mve binaries
+    APPS="bundle2pset dmrecon fssrecon makescene mesh2pset meshalign meshclean meshconvert scene2pset sceneupgrade sfmrecon"
+    for aps in $APPS
+        do
+	    cd "${srcdir}"/"${pkgname}/apps"/$aps
+            install -Dvm755 -v $aps "$pkgdir/usr/local/bin/$aps"
+            cd ..
+    done
+
+    # install licences
+    install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
+    install -m644 $srcdir/${pkgname}/LICENSE.txt "${pkgdir}/usr/share/licenses/${pkgname}/"
+    install -m644 $srcdir/${pkgname}/README.txt "${pkgdir}/usr/share/licenses/${pkgname}/"
+}

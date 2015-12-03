@@ -1,0 +1,21 @@
+[Desktop Entry]
+Comment[fr]=
+Comment=
+Exec=/opt/vsfm/bin/VisualSFM
+GenericName[fr]=A GUI application for Structure From Motion
+GenericName=A GUI application for Structure From Motion
+Icon=VisualSFM
+MimeType=
+Name[fr]=VisualSFM
+Name=VisualSFM
+NoDisplay=false
+Path=/opt/vsfm/bin/VisualSFM
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=none
+X-KDE-SubstituteUID=false
+X-KDE-Username=
+

@@ -1,9 +1,12 @@
-# vim: set ts=2 sw=2 et:
-# $Id:.
-# NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
+# NuxSFM portage and maintainer: <py.paranthoen at gmail dot com>
+# 01/15/2015
+# LFS 7.6  (non systemd because i simply hate it :-) )
+# versionning convention :
+# pkgrel=xy x=base release (must be fixed, eg NuxSFM rc1: x=1) y=package built version. starts at 1 then 1.1,
+# 1.2 and so on
 
 pkgbase=pba
-pkgname=('pba')
+pkgname=('pba-CUDA' 'pba-non-CUDA')
 pkgver=1.0.5
 pkgrel=1.1
 pkgdesc="Multicore Bundle Adjustment"
@@ -12,7 +15,7 @@ url="http://grail.cs.washington.edu/projects/mcba/"
 license=('GPL')
 groups=('computer-vision' 'sfm')
 #options=('!strip' '!libtool')
-makdepends=('gcc-libs' 'make' 'automake' 'autoconf')
+makdepends=('gcc' 'make' 'automake' 'autoconf')
 source=(http://grail.cs.washington.edu/projects/mcba/${pkgbase}_v${pkgver}.zip
 	makefile_no_gpu
 	makefile_with_cuda_compat_gpu)
@@ -21,8 +24,8 @@ md5sums=('672f5cd6c1b4c08517409809b819c547'
 	'SKIP')
 
 
-package() {
-	optdepends=('cuda: for Nvdia users')
+package_pba-CUDA() {
+	depends=('cuda')
 	makedepends=('cuda')
 	provides=('pba')
 	conflicts=('pba')
@@ -37,11 +40,11 @@ package() {
 	make CUDA_INSTALL_PATH=/opt/cuda
 	
         cd "$srcdir/${pkgbase}/bin/"
-        install -Dm755 libpba.so "$pkgdir"/usr/local/lib/libpba.so
-        install -Dm755 driver "$pkgdir"/usr/local/bin/driver
-        install -Dm755 out/${pkgbase}.o "$pkgdir"/usr/local/lib/${pkgbase}.o
-        install -Dm755 out/ConfigBA.o "$pkgdir"/usr/local/lib/ConfigBA.o
-        install -Dm755 out/SparseBundleCPU.o  "$pkgdir"/usr/local/lib/SparseBundleCPU.o 
+        install -Dm755 libpba.so "$pkgdir"/opt/sfm/lib/libpba.so
+        install -Dm755 driver "$pkgdir"/opt/sfm/bin/driver
+        install -Dm755 out/${pkgbase}.o "$pkgdir"/opt/sfm/lib/${pkgbase}.o
+        install -Dm755 out/ConfigBA.o "$pkgdir"/opt/sfm/lib/ConfigBA.o
+        install -Dm755 out/SparseBundleCPU.o  "$pkgdir"/opt/sfm/lib/SparseBundleCPU.o 
 
 	# license
 	install -Dm644 $srcdir/$pkgbase/COPYING "$pkgdir/usr/share/licenses/$pkgbase/COPYING"
@@ -50,4 +53,35 @@ package() {
 
 }
 
+package_pba-non-CUDA() {
+	provides=('pba')
+	conflicts=('pba')
+	replaces=('pba')
+
+        cd "$srcdir/${pkgbase}"
+        # No CUDA and SSE
+	make clean
+        install -m644 $startdir/makefile_no_gpu makefile
+	export CFLAGS="$CFLAGS -march=x86-64 -mtune=generic -O2 -pipe -L./bin"
+	export CXXFLAGS=$CFLAGS
+
+        make OUT_PBA=./bin/out
+
+
+        cd "$srcdir/${pkgbase}/bin/"
+        install -Dm755 libpba_no_gpu.so "$pkgdir"/opt/sfm/lib/libpba.so
+        install -Dm755 libpba_no_gpu.so "$pkgdir"/opt/sfm/bin/driver
+        install -Dm755 out/${pkgbase}.o "$pkgdir"/opt/sfm/lib/${pkgbase}.o
+        install -Dm755 out/ConfigBA.o "$pkgdir"/opt/sfm/lib/ConfigBA.o
+#        install -Dm644 out/CuTexImage.o "$pkgdir"/opt/sfm/lib/CuTexImage.o # Uncomment if built without CUDA
+#        install -Dm644 out/ProgramCU.o "$pkgdir"/opt/sfm/lib/ProgramCU.o # Uncomment if built without CUDA
+        install -Dm755 out/SparseBundleCPU.o  "$pkgdir"/opt/sfm/lib/SparseBundleCPU.o
+#        install -Dm644 out/SparseBundleCU.o "$pkgdir"/opt/sfm/lib/SparseBundleCU.o # Uncomment if built without CUDA
+
+        # license
+        install -Dm644 $srcdir/$pkgbase/COPYING "$pkgdir/usr/share/licenses/$pkgbase/COPYING"
+        install -Dm644 $srcdir/$pkgbase/History.txt "$pkgdir/usr/share/licenses/$pkgbase/History.txt"
+
+
+}
 

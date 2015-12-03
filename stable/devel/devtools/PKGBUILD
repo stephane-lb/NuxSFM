@@ -1,0 +1,24 @@
+# $Id$
+# Maintainer: Pierre Schmitz <pierre@archlinux.de>
+
+pkgname=devtools
+pkgver=20151002
+pkgrel=1
+pkgdesc='Tools for Arch Linux package maintainers'
+arch=('any')
+license=('GPL')
+url='http://projects.archlinux.org/devtools.git/'
+depends=('namcap' 'openssh' 'subversion' 'rsync' 'arch-install-scripts')
+source=("https://sources.archlinux.org/other/$pkgname/$pkgname-$pkgver.tar.gz")
+md5sums=('a8d1234c6c7b936a850858e3bc03b2c8')
+
+build() {
+	cd "${pkgname}-${pkgver}"
+	make PREFIX=/usr
+}
+
+package() {
+	cd "${pkgname}-${pkgver}"
+	make PREFIX=/usr DESTDIR=${pkgdir} install
+}
+

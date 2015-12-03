@@ -1,10 +1,13 @@
-# vim: set ts=2 sw=2 et:
-# $Id:.
-# NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
+# NuxSFM portage and maintainer: <py.paranthoen at gmail dot com>
+# 01/15/2015
+# LFS 7.6  (non systemd because i simply hate it :-) )
+# versionning convention :
+# pkgrel=xy x=base release (must be fixed, eg NuxSFM rc1: x=1) y=package built version. starts at 1 then 1.1,
+# 1.2 and so on
 
 pkgname=mvs-texturing
 # there is no git describe from Simon's GitHUB. Using last pull date (m/d/y) for versioning.
-pkgver=09152015
+pkgver=10142014
 pkgrel=1.1
 pkgdesc="3D reconstruction pipelines using structure-from-motion and multi-view stereo techniques"
 arch=('x86_64')
@@ -27,32 +30,30 @@ md5sums=('SKIP')
 
 
 # to be uncommented when git describe is available
-pkgver() {
-    cd "${srcdir}/${pkgbase%-git}"
-    git describe --long | sed -r 's/([^-]*-g)/r\1/;s/-/./g'
-}
+#pkgver() {
+#    cd "$srcdir/$pkgname"
+#    # Use the tag of the last commit
+#    git describe --long | sed -E 's/([^-]*-g)/r\1/;s/-/./g'
+#}
       
 
 build() {
     cd "$srcdir/$pkgname"
-    
-    unset CFLAGS
-    unset CXXFLAGS
-
     mkdir build
     cd build
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr/local ..
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/opt/sfm ..
     make
 
 }
 
 package() {
-    cd "$srcdir/$pkgname"
-    install -Dm755 "$srcdir/$pkgbase"/build/apps/texrecon/texrecon "${pkgdir}/usr/local/bin/texrecon"
+    # prepare directories
+    install -d "${pkgdir}/opt/sfm/bin"
+    cp -a "$srcdir/$pkgbase"/build/texrecon "${pkgdir}"/opt/sfm/bin
     
     # install licences
     install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
-    install -m644 $srcdir/$pkgname/LICENSE.txt "${pkgdir}/usr/share/licenses/${pkgname}/"
+    install -m644 $srcdir/$pkgname/COPYING.txt "${pkgdir}/usr/share/licenses/${pkgname}/"
     install -m644 $srcdir/$pkgname/README.md "${pkgdir}/usr/share/licenses/${pkgname}/"
     
     #clean src dir

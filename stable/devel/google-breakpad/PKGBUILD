@@ -1,7 +1,7 @@
 # Maintainer (NuxSFM)   : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
 
 pkgbase=breakpad
-pkgname=google-breakpad
+pkgname=google-breakpad-nuxsfm
 pkgver=r1498
 pkgrel=1.1
 pkgdesc="An open-source multi-platform crash reporting system"
@@ -16,6 +16,10 @@ source=("$pkgbase"::'git+https://chromium.googlesource.com/breakpad/breakpad'
 	linux_syscall_support.h)
 md5sums=('SKIP'
 	'9108c7ad9d07a99456f39445fddb7761')
+provides=('google-breakpad')
+conflicts=('google-breakpad')
+provides=('google-breakpad')
+
 
 prepare(){
     cd "$srcdir/$pkgbase"

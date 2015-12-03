@@ -1,0 +1,45 @@
+License & disclaimer.^M
+^M
+    Copyright 2006-2012 Changchang Wu^M
+^M
+    VisualSFM is free for personal, non-profit, or academic use. You may ^M
+    redistrubute VisualSFM as long as you make no modifications. Commercial^M
+    use of this tool is not permited, and please contact Changchang Wu if ^M
+    you are interested in commercial licensing. ^M
+^M
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS^M
+    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT^M
+    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR^M
+    A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT^M
+    OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,^M
+    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT^M
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,^M
+    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY^M
+    THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT^M
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE^M
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.^M
+^M
+------------------------------------------------------------------------------^M
+^M
+IMPORTANT^M
+^M
+    If you use VisualSFM for your publication, please cite either [1, 3]^M
+    or [2, 3] in the following publication list. If you use the SiftGPU^M
+    feature detection functionality, please consider also cite [4].^M
+ ^M
+    + Structure from Motion^M
+      [1] Changchang Wu, "Towards Linear-time Incremental Structure From^M
+          Motion", 3DV 2013^M
+      [2] Changchang Wu, "VisualSFM: A Visual Structure from Motion System", ^M
+          http://ccwu.me/vsfm/, 2011^M
+<------>   ^M
+    + Bundle Adjustment^M
+      [3] Changchang Wu, Sameer Agarwal, Brian Curless, and Steven M. Seitz,^M
+          "Multicore Bundle Adjustment", CVPR 2011<----> ^M
+<------>   ^M
+    + Feature Detection^M
+      [4] Changchang Wu, "SiftGPU: A GPU implementation of Scale Invaraint ^M
+          Feature Transform (SIFT)", http://cs.unc.edu/~ccwu/siftgpu, 2007^M
+<------>...
+
+

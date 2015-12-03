@@ -1,0 +1,112 @@
+# Maintainer: Valentin Churavy <v.churavy@gmail.com>
+# Contributor: Fabien Dubosson <fabien.dubosson@gmail.com>
+# Contributor: David Manouchehri <david@davidmanouchehri.com>
+# Contributor: CHEN Xing <cxcxcxcx@gmail.com>
+# Contributor: Martin Imobersteg <martin.imobersteg@gmail.com>
+# Contributor: Artyom Smirnov <smirnoffjr@gmail.com>
+# Also largely inspired by `opencv` in extra, so including contributors too:
+# Contributor: Ray Rashif <schiv@archlinux.org>
+# Contributor: Tobias Powalowski <tpowa@archlinux.org>
+# NuxSFM Portage & Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
+
+pkgbase="opencv-git"
+pkgname=('opencv-nuxsfm' 'opencv-nuxsfm-devel')
+pkgver=3.0.0.r532.gddf82d0
+pkgrel=1
+pkgdesc="Open Source Computer Vision Library"
+url="http://opencv.org/"
+license=('BSD')
+arch=('x86_64')
+depends=('gstreamer0.10-base' 'intel-tbb' 'openexr' 'cuda' 'libcl'
+         'xine-lib' 'libdc1394' 'gtkglext' 'ffmpeg' 'gtk3' 'libpng')
+makedepends=('git' 'cmake' 'python2-numpy' 'python-numpy' 'mesa' 'eigen' 'libgphoto2' 'eigen' 
+	    'ffmpeg' 'gtk3' 'cuda' 'libcl' 'libpng')
+optdepends=('python-numpy: Python 3 interface'
+            'python2-numpy: Python 2 interface')
+options=('staticlibs')
+changelog="ChangeLog"
+source=("${pkgbase%-git}::git+http://github.com/Itseez/opencv.git"
+        'fsh.patch')
+groups=('devel' 'nuxsfm-devel')
+md5sums=('SKIP'
+         '752652494b42fd1532f52b789a85947f')
+
+_cmakeopts=('-D WITH_OPENCL=ON'
+            '-D WITH_OPENGL=ON'
+            '-D WITH_TBB=ON'
+            '-D WITH_XINE=ON'
+            '-D BUILD_WITH_DEBUG_INFO=OFF'
+            '-D BUILD_TESTS=OFF'
+            '-D BUILD_PERF_TESTS=OFF'
+            '-D BUILD_EXAMPLES=ON'
+            '-D INSTALL_C_EXAMPLES=ON'
+            '-D INSTALL_PYTHON_EXAMPLES=ON'
+            '-D CMAKE_BUILD_TYPE=Release'
+            '-D CMAKE_INSTALL_PREFIX=/usr/local'
+            '-D CMAKE_SKIP_RPATH=ON'
+            '-D BUILD_NEW_PYTHON_SUPPORT=ON')
+
+# all x64 CPUs support SSE2 but not SSE3
+_cmakeopts+=('-D ENABLE_SSE3=OFF')
+
+pkgver() {
+    cd "${srcdir}/${pkgbase%-git}"
+    git describe --long | sed -r 's/([^-]*-g)/r\1/;s/-/./g'
+}
+
+prepare() {
+    cd "${srcdir}/${pkgbase%-git}"
+    # fix libpng16 include dir
+    sed -i -e "s#PNG_INCLUDE_DIR}/libpng/png.h#PNG_INCLUDE_DIR}/libpng16/png.h#g" cmake/OpenCVFindLibsGrfmt.cmake
+
+    # hack-fix folder naming inconsistency that they won't fix
+    # see http://code.opencv.org/issues/2512
+    # and https://bugs.archlinux.org/task/32342
+    patch -p1 -i "${srcdir}/fsh.patch"
+}
+
+build() {
+    cd "${srcdir}/${pkgbase%-git}"
+
+    # fix ippicv downloading by changing url
+    sed -i -e "s#http://sourceforge.net/projects/opencvlibrary/files/3rdparty/ippicv#http://ie.archive.ubuntu.com/disk1/disk1/download.sourceforge.net/pub/sourceforge/o/op/opencvlibrary/3rdparty/ippicv#g"  3rdparty/ippicv/downloader.cmake
+    cmake ${_cmakeopts[@]} .
+
+    make
+}
+
+package_opencv-nuxsfm() {
+    provides=('opencv-nuxsfm' 'opencv-git')
+    conflicts=('opencv-nuxsfm' 'opencv-git')
+    replaces=('opencv-nuxsfm' 'opencv-git')
+
+    cd "${srcdir}/${pkgbase%-git}"
+
+    make DESTDIR="${pkgdir}" install
+
+    # clean devel stuff. It will be available in the devel package
+    rm -fr "${pkgdir}"/usr/local/include
+    rm -f "${pkgdir}"/usr/local/lib/*.a
+    rm -f "${pkgdir}"/usr/local/share/opencv/*.cmake
+    rm -fr "${pkgdir}"/usr/local/share/opencv/3rdparty
+
+    # install LICENSE file
+    install -Dm644 "LICENSE" "${pkgdir}/usr/share/licenses/${pkgbase%-git}/LICENSE"
+}
+
+package_opencv-nuxsfm-devel() {
+    depends=('opencv-nuxsfm')
+    cd "${srcdir}/${pkgbase%-git}"
+
+    make DESTDIR="${pkgdir}" install
+    
+    # keep only devel stuff
+    rm -fr "${pkgdir}"/usr/local/bin
+    rm -fr "${pkgdir}"/usr/local/lib/pkgconfig
+    rm -fr "${pkgdir}"/usr/local/lib/python*
+    rm -f "${pkgdir}"/usr/local/lib/*.so*
+    rm -fr "${pkgdir}"/usr/local/share/opencv/{haarcascades,lbpcascades,lbpcascades,samples}
+
+}
+
+# vim:set ts=4 sw=4 et:

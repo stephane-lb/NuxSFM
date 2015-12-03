@@ -18,7 +18,7 @@ arch=('x86_64')
 url='http://www.cs.ubc.ca/~mariusm/index.php/FLANN/FLANN'
 license=('BSD')
 depends=('hdf5' 'openmpi' 'python2' 'intel-tbb' 'boost')
-makedepends=('cmake' 'python2' 'cuda<=6.9' 'python2' 'openmpi' 'hdf5' 'boost')
+makedepends=('cmake' 'python2' 'python2' 'openmpi' 'hdf5' 'boost')
 optdepends=('cuda<=6.9: cuda support')
 source=("http://people.cs.ubc.ca/~mariusm/uploads/FLANN/flann-${pkgver}-src.zip")
 md5sums=('a0ecd46be2ee11a68d2a7d9c6b4ce701')
