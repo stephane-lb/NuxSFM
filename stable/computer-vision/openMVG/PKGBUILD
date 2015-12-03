@@ -45,7 +45,6 @@ pkgver() {
     cd "${srcdir}/${pkgbase%-git}"
     git describe --long | sed -r 's/([^-]*-g)/r\1/;s/-/./g'
 }
-        
 
 prepare() {
     cd "$srcdir/$pkgname"
@@ -63,6 +62,7 @@ build() {
 	-DOpenMVG_USE_OPENCV=ON \
 	-DOpenCV_DIR="/usr/local/share/opencv" \
 	-DFLANN_LIBRARY="/usr/local" \
+	-DBUILD_PYTHON_BINDINGS=ON \
 	-DCeres_DIR=/usr/local/share/Ceres . ..
     make
 }
