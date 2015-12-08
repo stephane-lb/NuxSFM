@@ -89,7 +89,9 @@ package_openMVG() {
     rm -fr include
     
     # Remove ui_openMVG_control_points_registration from here. QT GUI application will have its own package.
-
+    rm $pkgdir/usr/local/bin/ui_openMVG_control_points_registration
+    
+    # openMVG suite run scripts
     install -dm755 "${pkgdir}"/usr/local/sbin
     install -m755 "$srcdir/SfM_GlobalPipeline.py" "${pkgdir}/usr/local/sbin/SfM_GlobalPipeline.py"
     install -m755 "$srcdir/SfM_SequentialPipeline.py" "${pkgdir}/usr/local/sbin/SfM_SequentialPipeline.py"
