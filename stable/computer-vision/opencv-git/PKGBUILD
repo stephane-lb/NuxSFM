@@ -11,13 +11,13 @@
 
 pkgbase="opencv-git"
 pkgname=('opencv-nuxsfm' 'opencv-nuxsfm-devel')
-pkgver=3.0.0.r645.gc3eb125
+pkgver=3.0.0.r825.g7172c16
 pkgrel=1
 pkgdesc="Open Source Computer Vision Library"
 url="http://opencv.org/"
 license=('BSD')
 arch=('x86_64')
-depends=('gstreamer0.10-base' 'intel-tbb' 'openexr' 'libcl' 'xine-lib' 'libdc1394' 'gtkglext' 'ffmpeg' 'gtk3' 'libpng' 'flann')
+depends=('gstreamer0.10-base' 'intel-tbb' 'openexr' 'libcl' 'xine-lib' 'libdc1394' 'gtkglext' 'ffmpeg' 'gtk3' 'libpng' 'flann' 'blas')
 makedepends=('git' 'cmake' 'python2-numpy' 'python-numpy' 'mesa' 'eigen' 'libgphoto2' 'eigen' 'ffmpeg' 'gtk3' 'libcl' 'libpng')
 optdepends=('python-numpy: Python 3 interface'
             'python2-numpy: Python 2 interface')
