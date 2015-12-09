@@ -34,10 +34,11 @@ package_pba-CUDA() {
         cd "$srcdir/${pkgbase}"
         # Enable CUDA and SSE
 	install -m644 $startdir/makefile_with_cuda_compat_gpu makefile
-	export CFLAGS="$CFLAGS -I/opt/cuda/include -L/opt/cuda/lib64 -march=x86-64 -march=x86-64 -mtune=generic -O2 -pipe -L./bin"
+	export CFLAGS="$CFLAGS -I/opt/cuda/include -L/opt/cuda/lib64 -march=x86-64 -mtune=generic -O2 -pipe -L$srcdir/${pkgbase}/bin"
 	export CXXFLAGS=$CFLAGS
 	
-	make CUDA_INSTALL_PATH=/opt/cuda
+	# switch to mono threaded as multi does not compile libpba.so	
+	make -j1 CUDA_INSTALL_PATH=/opt/cuda
 	
         cd "$srcdir/${pkgbase}/bin/"
         install -Dm755 libpba.so "$pkgdir"/opt/sfm/lib/libpba.so
@@ -64,8 +65,9 @@ package_pba-non-CUDA() {
         install -m644 $startdir/makefile_no_gpu makefile
 	export CFLAGS="$CFLAGS -march=x86-64 -mtune=generic -O2 -pipe -L./bin"
 	export CXXFLAGS=$CFLAGS
-
-        make OUT_PBA=./bin/out
+	
+	# switch to mono threaded as multi does not compile libpba.so
+        make -j1 OUT_PBA=./bin/out
 
 
         cd "$srcdir/${pkgbase}/bin/"
