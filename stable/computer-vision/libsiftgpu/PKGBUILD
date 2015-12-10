@@ -16,15 +16,12 @@ source=("http://wwwx.cs.unc.edu/~ccwu/cgi-bin/siftgpu.cgi?SiftGPU-V${pkgver}.zip
 	"license.txt"
 	"README.txt"
 	"makefile.cuda"
-	"makefile.noncuda"
-	"libsiftgpu.install")
+	"makefile.noncuda")
 md5sums=('dbc14f3e073a64c1892bb0b05cd91dfc'
-	'c6e3eb9a1146a80ff409dff4d6ad7a19'
-	'e0c35b3e104a5f1182057e1101929c12'
-	'131bd0cc21e3e9e0eb67a5126b774d2d'
-	'8c6280c0cadcd90200cbc36fdb629883'
-	'SKIP')
-install=libsiftgpu.install
+	'400f8c01138d9547a153b4f030fc853b'
+	'2c3c80871614e071ccb51c0a0da2020f'
+	'60e64c5a28c4cf57027d46b4166662b4'
+	'67f0831c1cd760ba88bf6a15d5c66a74')
 
 package_libsiftgpu-CUDA() {
 	provides=(libsiftgpu sift)
