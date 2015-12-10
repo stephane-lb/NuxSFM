@@ -21,10 +21,9 @@ build() {
     unset LDFLAGS
 
     cd "${srcdir}/${pkgbase}-${pkgver}"
-    ./configure --prefix=/usr/local
+    ./configure --prefix=/usr/local --mandir=/usr/local/share
     make
 }
-
 
 package_gsl-nuxsfm() {
     provides=('gsl')
