@@ -24,6 +24,7 @@ def get_parent_dir(directory):
 # Use $HOME as working dir
 from os.path import expanduser
 home_dir = expanduser("~")
+
 input_eval_dir =  home_dir+"/ImageDataset_SceauxCastle"
 
 # Checkout an OpenMVG image dataset with Git
