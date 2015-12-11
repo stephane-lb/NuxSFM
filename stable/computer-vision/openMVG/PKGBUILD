@@ -146,7 +146,7 @@ package_openMVG-tests() {
 }
 
 package_openMVG_samples() {
-    depends=('openMVG-v0.9')
+    depends=('openMVG-v0.9' 'git')
     provides=('openMVG-tests-v0.9' 'openMVG-tests')
     conflicts=('openMVG-tests-v0.7' 'openMVG-tests-v0.8')
     replaces=('openMVG-tests-v0.9')

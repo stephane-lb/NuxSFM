@@ -21,7 +21,12 @@ def get_parent_dir(directory):
     import os
     return os.path.dirname(directory)
 
-input_eval_dir = os.path.dirname(os.path.abspath(__file__)) + "/ImageDataset_SceauxCastle"
+# Use $HOME as working dir
+from os.path import expanduser
+home_dir = expanduser("~")
+
+input_eval_dir =  home_dir+"/ImageDataset_SceauxCastle"
+
 # Checkout an OpenMVG image dataset with Git
 if not os.path.exists(input_eval_dir):
   pImageDataCheckout = subprocess.Popen([ "git", "clone", "https://github.com/openMVG/ImageDataset_SceauxCastle.git" ])
@@ -44,7 +49,7 @@ camera_file_params = os.path.join(CAMERA_SENSOR_WIDTH_DIRECTORY, "sensor_width_c
 if not os.path.exists(matches_dir):
   os.mkdir(matches_dir)
 
-print ("1. Intrisics analysis") 
+print ("1. Intrinsics analysis") 
 pIntrisics = subprocess.Popen( [os.path.join(OPENMVG_SFM_BIN, "openMVG_main_SfMInit_ImageListing"),  "-i", input_dir, "-o", matches_dir, "-d", camera_file_params, "-c", "3"] )
 pIntrisics.wait()
 
@@ -53,7 +58,7 @@ pFeatures = subprocess.Popen( [os.path.join(OPENMVG_SFM_BIN, "openMVG_main_Compu
 pFeatures.wait()
 
 print ("2. Compute matches")
-pMatches = subprocess.Popen( [os.path.join(OPENMVG_SFM_BIN, "openMVG_main_ComputeMatches"),  "-i", matches_dir+"/sfm_data.json", "-o", matches_dir, "-r", "0.8", "-f", "1"] )
+pMatches = subprocess.Popen( [os.path.join(OPENMVG_SFM_BIN, "openMVG_main_ComputeMatches"),  "-i", matches_dir+"/sfm_data.json", "-o", matches_dir, "-f", "1"] )
 pMatches.wait()
 
 reconstruction_dir = os.path.join(output_dir,"reconstruction_sequential")
