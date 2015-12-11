@@ -78,9 +78,10 @@ package_openMVG() {
     make DESTDIR="$pkgdir" install
     
     # move and install camera database in appropriate dir
-    install -dm644  "${pkgdir}/usr/local/etc/openMVG"
-    mv "${pkgdir}/usr/local/share/openMVG/sensor_width_camera_database.txt" "${pkgdir}/usr/local/etc/openMVG"
-#    install -Dm644 "$srcdir/cameraGenerated.txt" "${pkgdir}/usr/local/etc/openMVG/cameraGenerated.txt"
+    # install -dm644  "${pkgdir}/usr/local/etc/openMVG"
+    # mv "${pkgdir}/usr/local/share/openMVG/sensor_width_camera_database.txt" "${pkgdir}/usr/local/etc/openMVG"
+    
+    install -Dm644 "${pkgdir}/usr/local/share/openMVG/sensor_width_camera_database.txt" "${pkgdir}/usr/local/etc/openMVG/sensor_width_camera_database.txt"
     
     # At this point, get rid off devel stuff. We'll place them later into openMVG-devel
     cd "$pkgdir/usr/local"
