@@ -1,0 +1,37 @@
+# vim: set ts=2 sw=2 et:
+# $Id:.
+# NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
+
+pkgname=('mvg2mvs' 'mvg2mvsDense')
+pkgver=0
+pkgrel=1
+pkgdesc="openMVS run scripts for openMVG"
+license=('GPL')
+arch=('any')
+url="http://www.nuxsfm.org"
+depends=('python' 'openMVS')
+source=('mvg2mvs.py' 'mvg2mvsDense.py' )
+md5sums=('SKIP'
+	 'SKIP')
+	
+
+package_mvg2mvs() {
+    pkgdesc="openMVS workflow for openMVG point cloud"
+    provides=('mvg2mvs')
+    conflicts=('mvgpmvs')
+    replaces=('mvg2mvs')
+
+    install -d "$pkgdir"/usr/local/sbin
+    install -m755 $pkgname.py "$pkgdir"/usr/local/sbin
+}
+
+package_mvg2mvsDense() {
+    pkgdesc="openMVS workflow for openMVG Point Cloud with densifying option"
+    provides=('mvg2mvsDense')
+    conflicts=('mvg2mvsDense')
+    replaces=('mvg2mvsDense')
+
+    install -d "$pkgdir"/usr/local/sbin
+    install -m755 $pkgname.py "$pkgdir"/usr/local/sbin
+}
+
