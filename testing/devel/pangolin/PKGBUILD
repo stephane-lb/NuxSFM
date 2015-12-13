@@ -33,7 +33,7 @@ build() {
     unset CFLAGS
     unset CXXFLAGS
     unset LDFLAGS
-    cd "$srcdir/$pkgname/src"
+    cd "$srcdir/$pkgname"
     [[ -d build ]] && rm -r build
     mkdir build
     cd build
@@ -49,7 +49,7 @@ package() {
     conflicts=('pangolin')
     replaces=('pangolin')
             
-    cd "$srcdir/$pkgname/src/build"        
+    cd "$srcdir/$pkgname/build"        
     install -dm755 "${pkgdir}"/opt/pangolin
     install -dm644 "${pkgdir}"/opt/pangolin 
     
