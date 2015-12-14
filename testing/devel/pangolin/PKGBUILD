@@ -2,7 +2,7 @@
 # $Id:.
 # NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
 
-pkgname=('Pangolin-git')
+pkgname=('pangolin-git')
 pkgver=v0.0
 pkgrel=1
 pkgdesc="Pangolin is a lightweight portable rapid development library for managing OpenGL display / interaction and abstracting video input"
@@ -43,15 +43,14 @@ build() {
 
 package() {
 
-# to check to simplify exe copy: find -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary'
+    # to check to simplify exe copy: find -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary'
     pkgdesc="Pangolin is a lightweight portable rapid development library for managing OpenGL display / interaction and abstracting video input."
     provides=('pangolin')
     conflicts=('pangolin')
     replaces=('pangolin')
-            
-    cd "$srcdir/$pkgname/build"        
-    install -dm755 "${pkgdir}"/opt/pangolin
-    install -dm644 "${pkgdir}"/opt/pangolin 
+    
+    cd "${srcdir}/${pkgbase}/build"        
+    make DESTDIR="${pkgdir}" install
     
 }
 
