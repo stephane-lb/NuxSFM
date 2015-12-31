@@ -1,6 +1,6 @@
 # vim: set ts=2 sw=2 et:
 # $Id:.
-# NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
+# Maintainer : Stephane-lb 
 
 pkgname=('pangolin-git')
 pkgver=v0.0
@@ -10,7 +10,7 @@ arch=('x86_64')
 url="https://github.com/mp3guy/Pangolin"
 groups=('computer-vision' 'sfm')
 license=('MPL 2.0')
-depends=('glew' 'boost' 'ffmpeg' 'libdc1394' 'libuvc-git' 'libjpeg' 'libpng' 'openni2' )
+depends=('glew' 'boost' 'ffmpeg' 'libdc1394' 'libuvc-git' 'libjpeg' 'libpng' 'openni2-nuxsfm' )
 makedepends=('cmake' 'git' 'make' 'gcc' 'dejagnu' 'boost')
 
 # The git repo is detected by the 'git:' or 'git+' beginning. The branch
@@ -29,16 +29,12 @@ prepare() {
 }
 
 build() {
-    unset CPPFLAGS
-    unset CFLAGS
-    unset CXXFLAGS
-    unset LDFLAGS
     cd "$srcdir/$pkgname"
     [[ -d build ]] && rm -r build
     mkdir build
     cd build
     cmake -DCPP11_NO_BOOST=1 ..
-    make -j8
+    make
 }
 
 package() {
@@ -50,7 +46,7 @@ package() {
     replaces=('pangolin')
     
     cd "${srcdir}/${pkgbase}/build"        
-    make DESTDIR="${pkgdir}" install
+    make DESTDIR="${pkgdir}/usr/local" install
     
 }
 

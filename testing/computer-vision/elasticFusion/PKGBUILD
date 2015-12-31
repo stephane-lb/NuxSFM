@@ -1,16 +1,16 @@
 # vim: set ts=2 sw=2 et:
 # $Id:.
-# NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
+# Maintainer : Stephane-lb
 
 pkgname=('elasticFusion-git')
 pkgver=v0.0
 pkgrel=1
-pkgdesc="Pangolin is a lightweight portable rapid development library for managing OpenGL display / interaction and abstracting video input"
+pkgdesc="Real-time dense visual SLAM system capable of capturing comprehensive dense globally consistent surfel-based maps of room scale environments explored using an RGB-D camera."
 arch=('x86_64')
-url="https://github.com/mp3guy/Pangolin"
+url="https://github.com/mp3guy/ElasticFusion"
 groups=('computer-vision' 'sfm')
 license=('MPL 2.0')
-depends=('freeglut' 'glew' 'boost' 'cuda>=7' 'ffmpeg' 'libdc1394' 'libuvc-git' 'libjpeg' 'libpng' 'openni2' 'pangolin-git' )
+depends=('freeglut' 'glew' 'boost' 'cuda>=7' 'ffmpeg' 'libdc1394' 'libuvc-git' 'libjpeg' 'libpng' 'openni2-nuxsfm' 'pangolin-git' )
 makedepends=('cmake' 'git' 'make' 'gcc')
 
 # The git repo is detected by the 'git:' or 'git+' beginning. The branch
@@ -29,44 +29,40 @@ prepare() {
 }
 
 build() {
-    unset CPPFLAGS
-    unset CFLAGS
-    unset CXXFLAGS
-    unset LDFLAGS
     cd "$srcdir/$pkgname"
     [[ -d build ]] && rm -r build
     cd Core
     mkdir build
     cd build
     cmake ../src
-    make -j8
+    make
     cd ../../GPUTest
     mkdir build
     cd build
     cmake ../src
-    make -j8
+    make
     cd ../../GUI
     mkdir build
     cd build
     cmake ../src
-    make -j8
+    make
 }
 
 package() {
 
     # to check to simplify exe copy: find -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary'
-    pkgdesc="Pangolin is a lightweight portable rapid development library for managing OpenGL display / interaction and abstracting video input."
+    pkgdesc="Real-time dense visual SLAM system capable of capturing comprehensive dense globally consistent surfel-based maps of room scale environments explored using an RGB-D camera."
     provides=('elasticFusion')
     conflicts=('elasticFusion')
     replaces=('elasticFusion')
     
     cd "${srcdir}/${pkgbase}"
     cd Core/build
-    make DESTDIR="${pkgdir}" install
+    make DESTDIR="${pkgdir}/usr/local" install
     cd ../../GPUTest/build
-    make DESTDIR="${pkgdir}" install
+    make DESTDIR="${pkgdir}/usr/local" install
     cd ../../GUI/build
-    make DESTDIR="${pkgdir}" install
+    make DESTDIR="${pkgdir}/usr/local" install
     
 }
 
