@@ -4,14 +4,14 @@
 
 pkgbase=('openMVS')
 pkgname=('openMVS')
-pkgver=v0.5.r8.ge1c3adc
+pkgver=v0.7.r9.g8cbeda1
 pkgrel=1
 pkgdesc="OpenMVS (Multi-View Stereo) is a library for computer-vision scientists and especially targeted to the Multi-View Stereo reconstruction community."
 arch=('x86_64')
 url="http://cdcseacave.github.io/openMVS/"
 groups=('computer-vision' 'sfm')
 license=('AGPL')
-depends=('eigen>=3.2' 'opencv-git' 'ceres-solver>=1.10' 'cgal>=4.2' 'boost-libs>=1.59' 'openMVG>=v0.8.1' 'google-glog' 'suitesparse')
+depends=('eigen>=3.2' 'opencv' 'ceres-solver>=1.10' 'cgal>=4.2' 'boost-libs>=1.59' 'openMVG>=v0.8.1' 'google-glog' 'suitesparse')
 makedepends=('eigen>=3.2' 'ceres-solver>=1.10' 'cgal>=4.2' 'boost-libs>=1.59' 'git' 'subversion' 'openMVG-devel>=v0.8.1' 'boost')
 provides=('openMVS')
 conflicts=('openMVS')
@@ -19,12 +19,10 @@ replaces=('openMVS')
 
 # The git repo is detected by the 'git:' or 'git+' beginning. The branch
 # '$pkgname' is then checked out upon cloning, expediating versioning:
-source=("$pkgname"::'git+https://github.com/cdcseacave/openMVS.git#branch=develop'
-	'VCGLib.patch')
+source=("$pkgname"::'git+https://github.com/cdcseacave/openMVS.git#branch=develop')
     
 # Because the sources are not static, skip Git checksum:
-md5sums=('SKIP'
-	'237c454f539a310fdae7b843fa3a6495')
+md5sums=('SKIP')
 
 pkgver() {
     cd "${srcdir}/${pkgbase%-git}"
@@ -38,9 +36,8 @@ prepare() {
     
     # Get VCGLib
     cd $srcdir
-    svn checkout svn://svn.code.sf.net/p/vcg/code/trunk/vcglib vcglib
+    git clone https://github.com/cdcseacave/VCG.git vcglib
     cd $srcdir/vcglib
-    patch -Np0 -i $srcdir/VCGLib.patch
 }
 
 build() {
