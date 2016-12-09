@@ -2,7 +2,8 @@
 # $Id:.
 # NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
 
-pkgname=('libsiftgpu-CUDA' 'libsiftgpu-MESA')
+pkgname=('libsiftgpu-MESA')
+#pkgname=('libsiftgpu-CUDA') we are on docer so no Cuda
 pkgver=400
 pkgrel=1.1
 pkgdesc="SiftGPU Libraries: A GPU Implementation of Scale Invariant Feature Transform (SIFT)"

@@ -3,14 +3,14 @@
 # NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
 
 pkgname=bundler
-pkgver=0.0
+pkgver=1.0
 pkgrel=1.1
 pkgdesc="Bundler is a structure-from-motion system for unordered image collections (for instance, images from the Internet)."
 arch=('x86_64')
 url="http://www.cs.cornell.edu/~snavely/bundler/"
 license=('GPL')
 depends=('python' 'libsiftgpu' 'jhead')
-makedepends=('git' 'lapack' 'gcc' 'blas')
+makedepends=('git' 'lapack' 'gcc' 'gcc-fortran' 'blas')
 provides=('bundler')
 conflicts=('bundler')
 provides=('bundler')
@@ -33,11 +33,11 @@ prepare() {
 }
 
 
-pkgver() {
-  cd "$srcdir/$pkgname"
-  # Use the tag of the last commit
-  git describe --long | sed -E 's/([^-]*-g)/r\1/;s/-/./g'
-}
+#pkgver() {
+#  cd "$srcdir/$pkgname"
+#  # Use the tag of the last commit
+#  git describe --long | sed -E 's/([^-]*-g)/r\1/;s/-/./g'
+#}
 
 
 build() {

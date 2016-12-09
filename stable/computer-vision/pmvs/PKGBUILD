@@ -3,14 +3,14 @@
 # NuxSFM Maintainer : Pierre-Yves Paranthoen <nuxsfm at you know what gmail dot com>
 
 pkgname=pmvs2
-pkgver=0.0
+pkgver=2.0
 pkgrel=1.1
 pkgdesc="Many multi-view stereo (MVS) algorithms do not scale well to a large number of input images (lack of computational and memory resources)"
 arch=('x86_64')
 url="http://www.di.ens.fr/cmvs/"
 license=('GPL')
-depends=('libjpeg-turbo' 'gsl-nuxsfm' 'boost')
-makedepends=('git' 'boost' 'lapack' 'cmake' 'gsl-nuxsfm-devel')
+depends=('libjpeg-turbo' 'gsl' 'boost')
+makedepends=('git' 'boost' 'lapack' 'cmake' 'gsl')
 #conflicts=('')
 #provides=('')
 groups=('computer-vision' 'sfm')
@@ -30,11 +30,11 @@ prepare() {
 }
 
 
-pkgver() {
-    cd "$srcdir/$pkgname"
-    # Use the tag of the last commit
-    git describe --long | sed -r 's/([^-]*-g)/r\1/;s/-/./g'
-}
+#pkgver() {
+#    cd "$srcdir/$pkgname"
+#    # Use the tag of the last commit
+#    git describe --long | sed -r 's/([^-]*-g)/r\1/;s/-/./g'
+#}
 
 
 build() {

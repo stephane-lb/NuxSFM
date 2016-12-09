@@ -6,7 +6,8 @@
 # 1.2 and so on
 
 pkgbase=pba
-pkgname=('pba-CUDA' 'pba-non-CUDA')
+#pkgname=('pba-CUDA')
+pkgname=('pba-non-CUDA')
 pkgver=1.0.5
 pkgrel=1.1
 pkgdesc="Multicore Bundle Adjustment"
