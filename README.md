@@ -13,7 +13,7 @@ It's meant to provide an easy to use solution for building Arch Linux Docker ima
 
 - Place this `Dockerfile`, its `.dockerignore` and the `bootstrap.tar.gz` in one directory.
 
-- `cd` to that directory and build the image with a command like `docker build --build-arg architecture=x86_64 --tag archlinux-x86_64-base .`. Mind the dot! Use `--build-arg architecture=i686` if you are building from an i686 `bootstrap.tar.gz`.
+- `cd` to that directory and build the image with a command like `docker build --build-arg architecture=x86_64 --tag nuxsfn-x86_64 .`. Mind the dot! Use `--build-arg architecture=i686` if you are building from an i686 `bootstrap.tar.gz`.
 
 ###See also
 
