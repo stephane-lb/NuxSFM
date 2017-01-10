@@ -1,5 +1,5 @@
 FROM scratch
-MAINTAINER Maciej Sieczka
+MAINTAINER Stephane-lb
 
 # Set the $architecture ARG on your `docker build' command line with `--build-arg architecture=x86_64' or `i686'.
 ARG architecture
