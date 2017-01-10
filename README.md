@@ -15,7 +15,7 @@ It's meant to provide an easy to use solution for building Arch Linux Docker ima
 
 - `cd` to that directory and build the image with a command like `docker build --build-arg architecture=x86_64 --tag nuxsfm-x86_64 .`. Mind the dot! Use `--build-arg architecture=i686` if you are building from an i686 `bootstrap.tar.gz`.
 
-- Launch `docker run -i -t nuxsfm-x86_64` 
+- Launch `docker run -i -t nuxsfm-x86_64 bash` 
 
 ###See also
 
